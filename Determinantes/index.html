@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploradores de Determinantes - Escola Sant Salvador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f0f9ff;
+            overflow-x: hidden;
+        }
+
+        .card-anim {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card-anim:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .btn-press:active { transform: scale(0.9); }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .animate-shake { animation: shake 0.3s ease-in-out; border-color: #ef4444 !important; }
+
+        @keyframes success-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); filter: brightness(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-success { animation: success-pop 0.4s ease-out; }
+
+        @keyframes float-up {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+
+        .floating-points {
+            position: absolute;
+            animation: float-up 0.8s forwards;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .flash-card { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .drop-zone { min-height: 100px; transition: all 0.3s ease; }
+        .drop-zone.active { background-color: #dbeafe; border-color: #2563eb; transform: scale(1.05); z-index: 10; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <div id="app" class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border-b-8 border-green-200">
+        <header class="bg-gradient-to-r from-green-600 to-blue-500 p-4 md:p-6 text-white relative flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-5">
+                <div class="bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden w-20 h-20 shrink-0 border-2 border-white/20">
+                    <img 
+                        src="LOGO ESCOLA (original).jpg" 
+                        alt="Logo Escola Sant Salvador" 
+                        class="max-w-full max-h-full object-contain"
+                        onerror="this.style.display='none'; document.getElementById('fallback-icon').classList.remove('hidden');"
+                    >
+                    <i class="fas fa-school text-green-600 text-3xl hidden" id="fallback-icon"></i>
+                </div>
+                <div class="text-left">
+                    <h1 class="text-2xl md:text-3xl font-bold italic tracking-tight leading-tight">Exploradores de Determinantes</h1>
+                    <p class="text-xs font-bold opacity-90 uppercase tracking-widest mt-1">Escola Sant Salvador</p>
+                </div>
+            </div>
+            
+            <div id="score-display" class="bg-yellow-400 text-blue-900 px-6 py-2 rounded-2xl font-black shadow-lg hidden transform transition-all duration-500 hover:scale-110 border-b-4 border-yellow-600">
+                <i class="fas fa-star mr-2"></i> Puntos: <span id="score">0</span>
+            </div>
+        </header>
+
+        <main id="main-menu" class="p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center uppercase tracking-widest text-sm">Escoge tu aventura</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <button onclick="showReview()" class="card-anim bg-green-50 p-8 rounded-3xl border-4 border-green-200 flex flex-col items-center text-center group">
+                    <div class="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mb-5 text-white shadow-lg group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-book-open text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-green-800 mb-2">Guía</h3>
+                    <p class="text-green-600 text-sm leading-tight">Repasa los secretos de los determinantes.</p>
+                </button>
+
+                <button onclick="startClassifyGame()" class="card-anim bg-blue-50 p-8 rounded-3xl border-4 border-blue-200 flex flex-col items-center text-center group">
+                    <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mb-5 text-white shadow-lg group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-boxes text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-blue-800 mb-2">Cajas Mágicas</h3>
+                    <p class="text-blue-600 text-sm leading-tight">Ordena cada palabra en su almacén.</p>
+                </button>
+
+                <button onclick="startCompleteGame()" class="card-anim bg-purple-50 p-8 rounded-3xl border-4 border-purple-200 flex flex-col items-center text-center group">
+                    <div class="w-16 h-16 bg-purple-500 rounded-2xl flex items-center justify-center mb-5 text-white shadow-lg group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-pencil-alt text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-purple-800 mb-2">Misión Frases</h3>
+                    <p class="text-purple-600 text-sm leading-tight">Completa el sentido de la historia.</p>
+                </button>
+
+                <button onclick="startFlashGame()" class="card-anim bg-orange-50 p-8 rounded-3xl border-4 border-orange-200 flex flex-col items-center text-center group">
+                    <div class="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mb-5 text-white shadow-lg group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-bolt text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-orange-800 mb-2">Modo Flash</h3>
+                    <p class="text-orange-600 text-sm leading-tight">¡Solo para los más rápidos de 5º!</p>
+                </button>
+            </div>
+        </main>
+
+        <section id="review-section" class="hidden p-8">
+            <button onclick="showMenu()" class="mb-6 text-blue-600 font-bold flex items-center hover:translate-x-[-5px] transition-transform">
+                <i class="fas fa-arrow-left mr-2"></i> Volver al menú
+            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-blue-100 p-5 rounded-2xl border-2 border-blue-200">
+                    <h4 class="font-bold text-blue-800 mb-2">Art. Definidos</h4>
+                    <p class="text-sm text-blue-700"><b>el, la, los, las</b><br>Cosas conocidas.</p>
+                </div>
+                <div class="bg-cyan-100 p-5 rounded-2xl border-2 border-cyan-200">
+                    <h4 class="font-bold text-cyan-800 mb-2">Art. Indefinidos</h4>
+                    <p class="text-sm text-cyan-700"><b>un, una, unos, unas</b><br>Cosas no conocidas.</p>
+                </div>
+                <div class="bg-orange-100 p-5 rounded-2xl border-2 border-orange-200">
+                    <h4 class="font-bold text-orange-800 mb-2">Demostrativos</h4>
+                    <p class="text-sm text-orange-700"><b>este, esa, aquel...</b><br>Indican distancia.</p>
+                </div>
+                <div class="bg-purple-100 p-5 rounded-2xl border-2 border-purple-200">
+                    <h4 class="font-bold text-purple-800 mb-2">Posesivos</h4>
+                    <p class="text-sm text-purple-700"><b>mi, tu, nuestro, sus...</b><br>Indican pertenencia.</p>
+                </div>
+                <div class="bg-yellow-100 p-5 rounded-2xl border-2 border-yellow-200">
+                    <h4 class="font-bold text-yellow-800 mb-2">Numerales</h4>
+                    <p class="text-xs text-yellow-700"><b>Cardinales:</b> uno, dos...<br><b>Ordinales:</b> primer, sexta...<br><b>Partitivos:</b> media, cuarto...<br><b>Múltiplos:</b> doble, triple...</p>
+                </div>
+                <div class="bg-gray-100 p-5 rounded-2xl border-2 border-gray-200">
+                    <h4 class="font-bold text-gray-800 mb-2">Indefinidos (otros)</h4>
+                    <p class="text-sm text-gray-700"><b>muchos, pocos, varios...</b><br>Cantidad imprecisa.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="game-section" class="hidden p-8">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="showMenu()" class="text-gray-300 hover:text-red-500 transition-colors transform hover:rotate-90">
+                    <i class="fas fa-times-circle text-3xl"></i>
+                </button>
+                <div class="flex-grow max-w-xl mx-8 relative">
+                    <div class="h-4 bg-gray-100 rounded-full overflow-hidden border shadow-inner">
+                        <div id="game-progress" class="progress-bar bg-gradient-to-r from-green-400 to-green-600 h-full rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span id="level-indicator" class="font-black text-blue-600 bg-blue-50 px-4 py-1 rounded-full text-xs uppercase">Reto 1/4</span>
+            </div>
+            <div id="game-content" class="text-center relative"></div>
+        </section>
+
+        <div id="feedback-overlay" class="hidden fixed inset-0 bg-blue-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div class="bg-white max-w-md w-full p-8 rounded-[40px] text-center shadow-2xl border-b-8 border-gray-200 transform transition-all duration-300 scale-95" id="feedback-modal">
+                <div id="feedback-icon" class="text-8xl mb-4 transform scale-125"></div>
+                <h3 id="feedback-title" class="text-3xl font-black mb-2 text-gray-800"></h3>
+                <div id="feedback-explanation" class="text-gray-600 mb-8 bg-gray-50 p-5 rounded-3xl italic text-lg border-2 border-dashed border-gray-200"></div>
+                <button id="feedback-btn" class="w-full bg-blue-600 text-white px-6 py-4 rounded-2xl font-black hover:bg-blue-700 shadow-xl text-xl transform active:scale-95 transition-all"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS ACTUALIZADA ---
+        const WORDS_DB = [
+            // Artículos Definidos
+            { text: 'el', type: 'art. definido' }, { text: 'la', type: 'art. definido' },
+            { text: 'los', type: 'art. definido' }, { text: 'las', type: 'art. definido' },
+            // Artículos Indefinidos
+            { text: 'un', type: 'art. indefinido' }, { text: 'una', type: 'art. indefinido' },
+            { text: 'unos', type: 'art. indefinido' }, { text: 'unas', type: 'art. indefinido' },
+            // Demostrativos
+            { text: 'este', type: 'demostrativo' }, { text: 'esta', type: 'demostrativo' },
+            { text: 'esos', type: 'demostrativo' }, { text: 'aquel', type: 'demostrativo' },
+            // Posesivos
+            { text: 'mi', type: 'posesivo' }, { text: 'mis', type: 'posesivo' },
+            { text: 'nuestro', type: 'posesivo' }, { text: 'tuya', type: 'posesivo' },
+            // Numerales (Variados)
+            { text: 'dos', type: 'numeral' },        // Cardinal
+            { text: 'cien', type: 'numeral' },       // Cardinal
+            { text: 'primer', type: 'numeral' },     // Ordinal
+            { text: 'quinta', type: 'numeral' },     // Ordinal
+            { text: 'media', type: 'numeral' },      // Partitivo
+            { text: 'cuarto', type: 'numeral' },     // Partitivo
+            { text: 'doble', type: 'numeral' },      // Múltiplo
+            { text: 'triple', type: 'numeral' },     // Múltiplo
+            // Indefinidos (Cantidad)
+            { text: 'algún', type: 'indefinido (cantidad)' }, { text: 'muchas', type: 'indefinido (cantidad)' },
+            { text: 'varios', type: 'indefinido (cantidad)' }, { text: 'cada', type: 'indefinido (cantidad)' }
+        ];
+
+        const COMPLETE_DB = [
+            { sentence: "Me he comido ___ pizza yo solo.", options: ["media", "el", "estos"], correct: "media", context: "Numeral Partitivo (indica una parte)." },
+            { sentence: "Tengo que dar un ___ salto para llegar.", options: ["doble", "unas", "mi"], correct: "doble", context: "Numeral Múltiplo (indica multiplicación)." },
+            { sentence: "Vivo en el ___ piso de ese edificio.", options: ["sexto", "un", "sus"], correct: "sexto", context: "Numeral Ordinal (indica orden)." },
+            { sentence: "He comprado ___ panes en la panadería.", options: ["cuatro", "la", "aquel"], correct: "cuatro", context: "Numeral Cardinal (indica cantidad exacta)." },
+            { sentence: "___ perro de Juan es muy juguetón.", options: ["El", "Unas", "Varias"], correct: "El", context: "Artículo Definido (perro específico)." },
+            { sentence: "He visto ___ pájaro azul en el jardín.", options: ["un", "las", "diez"], correct: "un", context: "Artículo Indefinido (pájaro no identificado)." }
+        ];
+
+        const CATEGORIES = ['art. definido', 'art. indefinido', 'demostrativo', 'posesivo', 'numeral', 'indefinido (cantidad)'];
+        const EXPLANATIONS = {
+            'art. definido': "Acompañan a sustantivos conocidos.",
+            'art. indefinido': "Acompañan a sustantivos no conocidos.",
+            'demostrativo': "Indican cercanía o distancia.",
+            'posesivo': "Indican a quién pertenece.",
+            'numeral': "Incluye Cardinales, Ordinales, Partitivos y Múltiplos.",
+            'indefinido (cantidad)': "Indican una cantidad de forma vaga."
+        };
+
+        let activeGameData = [];
+        let currentLevel = 0;
+        let score = 0;
+        const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+
+        function showMenu() {
+            document.getElementById('main-menu').classList.remove('hidden');
+            document.getElementById('review-section').classList.add('hidden');
+            document.getElementById('game-section').classList.add('hidden');
+            document.getElementById('score-display').classList.add('hidden');
+        }
+
+        function showReview() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('review-section').classList.remove('hidden');
+        }
+
+        function startClassifyGame() {
+            score = 0; currentLevel = 0;
+            const pool = shuffle([...WORDS_DB]).slice(0, 18);
+            activeGameData = [];
+            for(let i=0; i<3; i++) {
+                activeGameData.push({ gameType: 'classify', words: pool.slice(i*6, (i+1)*6), categories: CATEGORIES });
+            }
+            setupGameUI();
+        }
+
+        function startCompleteGame() {
+            score = 0; currentLevel = 0;
+            activeGameData = shuffle([...COMPLETE_DB]).slice(0, 5).map(v => ({...v, gameType: 'complete'}));
+            setupGameUI();
+        }
+
+        function startFlashGame() {
+            score = 0; currentLevel = 0;
+            activeGameData = shuffle([...WORDS_DB]).slice(0, 10).map(v => ({...v, gameType: 'flash'}));
+            setupGameUI();
+        }
+
+        function setupGameUI() {
+            document.getElementById('score').innerText = score;
+            document.getElementById('score-display').classList.remove('hidden');
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('game-section').classList.remove('hidden');
+            loadLevel();
+        }
+
+        function loadLevel() {
+            const data = activeGameData[currentLevel];
+            document.getElementById('game-progress').style.width = `${(currentLevel / activeGameData.length) * 100}%`;
+            document.getElementById('level-indicator').innerText = `RETO ${currentLevel + 1}/${activeGameData.length}`;
+            const content = document.getElementById('game-content');
+            content.className = "text-center relative";
+
+            if (data.gameType === 'classify') renderClassify(data);
+            else if (data.gameType === 'complete') renderComplete(data);
+            else renderFlash(data);
+        }
+
+        function renderClassify(data) {
+            let html = `<h2 class="text-xl mb-8 font-bold text-blue-800 italic">¡Clasifica estos determinantes!</h2>
+                <div class="flex flex-wrap justify-center gap-3 mb-12 min-h-[60px]" id="word-pool">`;
+            data.words.forEach(w => {
+                html += `<div draggable="true" ondragstart="onDragStart(event)" data-type="${w.type}" data-text="${w.text}" class="word-pill bg-white border-2 border-blue-400 px-6 py-3 rounded-2xl shadow-lg text-blue-700 font-black cursor-grab active:cursor-grabbing hover:scale-105 transition-transform">${w.text}</div>`;
+            });
+            html += `</div><div class="grid grid-cols-2 md:grid-cols-3 gap-6">`;
+            data.categories.forEach(cat => {
+                html += `<div class="drop-zone p-4 rounded-3xl flex flex-col items-center bg-blue-50 border-2 border-dashed border-blue-200" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)" data-category="${cat}">
+                    <span class="text-[9px] uppercase font-black text-blue-400 mb-3 tracking-widest">${cat}</span>
+                    <div class="drop-area w-full h-full min-h-[50px] flex flex-wrap gap-2 justify-center"></div>
+                </div>`;
+            });
+            html += `</div><button onclick="checkClassify()" class="mt-10 bg-blue-600 text-white px-12 py-4 rounded-2xl font-black shadow-xl btn-press hover:bg-blue-700 uppercase tracking-widest">Revisar Cajas</button>`;
+            document.getElementById('game-content').innerHTML = html;
+        }
+
+        function renderFlash(data) {
+            let html = `<h2 class="text-xl mb-6 font-bold text-orange-800 italic">¡IDENTIFICA AHORA!</h2>
+                <div id="flash-card-box" class="flash-card text-6xl md:text-8xl font-black text-orange-600 py-16 mb-12 bg-white rounded-[50px] border-8 border-orange-100 shadow-2xl relative overflow-hidden">
+                    <div class="relative z-10">${data.text}</div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">`;
+            CATEGORIES.forEach(cat => {
+                html += `<button onclick="handleFlash(this, '${cat}')" class="bg-white border-2 border-orange-200 p-4 rounded-2xl font-black hover:bg-orange-50 text-orange-900 uppercase text-[9px] shadow-sm btn-press transition-all">${cat}</button>`;
+            });
+            html += `</div>`;
+            document.getElementById('game-content').innerHTML = html;
+        }
+
+        function renderComplete(data) {
+            let html = `<h2 class="text-xl mb-8 font-bold text-purple-800">¿Qué tipo de palabra falta?</h2>
+                <div class="text-2xl md:text-3xl mb-12 p-10 bg-purple-50 rounded-[40px] border-4 border-purple-100 text-purple-900 shadow-inner font-bold">
+                    ${data.sentence.replace('___', '<span id="blank" class="border-b-8 border-purple-400 px-4 text-purple-300">...</span>')}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">`;
+            shuffle([...data.options]).forEach(opt => {
+                html += `<button onclick="handleComplete(this, '${opt}')" class="bg-white border-4 border-gray-100 p-8 rounded-3xl text-2xl font-black shadow-lg btn-press hover:border-purple-300 hover:bg-purple-50 transition-all">${opt}</button>`;
+            });
+            html += `</div>`;
+            document.getElementById('game-content').innerHTML = html;
+        }
+
+        // --- FUNCIONES DE LOGICA (COMPARTIDAS) ---
+        function onDragStart(e) { e.dataTransfer.setData('type', e.target.dataset.type); e.dataTransfer.setData('text', e.target.dataset.text); }
+        function onDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('active'); }
+        function onDragLeave(e) { e.currentTarget.classList.remove('active'); }
+        function onDrop(e) {
+            e.preventDefault(); e.currentTarget.classList.remove('active');
+            const text = e.dataTransfer.getData('text');
+            const type = e.dataTransfer.getData('type');
+            const pill = document.createElement('div');
+            pill.className = "bg-blue-600 text-white text-[10px] px-3 py-1 rounded-full font-bold animate-success shadow-md";
+            pill.innerText = text; pill.dataset.type = type;
+            e.currentTarget.querySelector('.drop-area').appendChild(pill);
+            document.querySelectorAll('#word-pool div').forEach(p => { if(p.innerText === text) p.remove(); });
+        }
+
+        function handleFlash(btn, cat) {
+            const data = activeGameData[currentLevel];
+            if(cat === data.type) {
+                score += 20;
+                btn.classList.add('bg-green-500', 'text-white', 'animate-success');
+                spawnFloatingText(btn, "+20");
+                setTimeout(() => showFeedback('⚡', '¡Increíble!', `¡Exacto! <b>${data.text}</b> es un ${cat}.`, '¡Siguiente!', true), 400);
+            } else {
+                btn.classList.add('animate-shake', 'bg-red-500', 'text-white');
+                setTimeout(() => showFeedback('❌', '¡Casi!', `<b>${data.text}</b> es un <b>${data.type}</b>.<br>${EXPLANATIONS[data.type]}`, 'Continuar', true), 600);
+            }
+        }
+
+        function handleComplete(btn, text) {
+            const data = activeGameData[currentLevel];
+            if(text === data.correct) {
+                score += 30;
+                btn.classList.add('bg-green-500', 'text-white', 'animate-success');
+                document.getElementById('blank').innerText = text;
+                document.getElementById('blank').className = "border-b-8 border-green-400 px-4 text-green-600 animate-success";
+                setTimeout(() => showFeedback('🌟', '¡Brillante!', data.context, 'Adelante', true), 700);
+            } else {
+                btn.classList.add('animate-shake', 'bg-red-100');
+                setTimeout(() => showFeedback('🤔', 'Piénsalo...', 'Esa opción no encaja con el sentido de la frase.', 'Reintentar', false), 400);
+            }
+        }
+
+        function checkClassify() {
+            let errors = []; let count = 0;
+            document.querySelectorAll('.drop-zone').forEach(z => {
+                const cat = z.dataset.category;
+                z.querySelectorAll('.drop-area div').forEach(p => {
+                    count++;
+                    if(p.dataset.type !== cat) errors.push(`'<b>${p.innerText}</b>' no es un <b>${cat}</b>.`);
+                });
+            });
+            if(count < activeGameData[currentLevel].words.length) return showFeedback('📦', '¡Faltan palabras!', 'Aún quedan determinantes sin caja.', '¡A por ellos!', false);
+            if(errors.length === 0) {
+                score += 100;
+                showFeedback('👑', '¡Perfecto!', 'Has organizado todos los determinantes sin fallos.', 'Siguiente Reto', true);
+            } else {
+                showFeedback('⚠️', 'Atención', errors.slice(0,3).join('<br>'), 'Corregir', false, true);
+            }
+        }
+
+        function spawnFloatingText(el, text) {
+            const rect = el.getBoundingClientRect();
+            const float = document.createElement('div');
+            float.className = "floating-points text-green-600 text-2xl z-50";
+            float.innerText = text;
+            float.style.left = `${rect.left + rect.width/2}px`;
+            float.style.top = `${rect.top}px`;
+            document.body.appendChild(float);
+            setTimeout(() => float.remove(), 800);
+        }
+
+        function showFeedback(icon, title, msg, btnText, isCorrect, reset = false) {
+            const overlay = document.getElementById('feedback-overlay');
+            const modal = document.getElementById('feedback-modal');
+            document.getElementById('feedback-icon').innerText = icon;
+            document.getElementById('feedback-title').innerText = title;
+            document.getElementById('feedback-explanation').innerHTML = msg;
+            document.getElementById('score').innerText = score;
+            const btn = document.getElementById('feedback-btn');
+            btn.innerText = btnText;
+            overlay.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('scale-95', 'opacity-0'), 10);
+
+            btn.onclick = () => {
+                modal.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                    if(isCorrect) { 
+                        currentLevel++; 
+                        if(currentLevel < activeGameData.length) loadLevel(); 
+                        else finishGame(); 
+                    } else if(reset) loadLevel();
+                }, 200);
+            }
+        }
+
+        function finishGame() {
+            document.getElementById('game-content').innerHTML = `
+                <div class="py-16 animate-success">
+                    <div class="text-9xl mb-6">🥇</div>
+                    <h2 class="text-5xl font-black mb-4 text-blue-900 uppercase">¡AVENTURA TERMINADA!</h2>
+                    <p class="text-xl text-gray-500 mb-10">Eres todo un experto en determinantes de la Escola Sant Salvador.</p>
+                    <div class="bg-gradient-to-br from-yellow-400 to-orange-500 text-white p-10 rounded-[50px] inline-block mb-10 shadow-2xl border-b-8 border-orange-700">
+                        <p class="text-xs opacity-80 uppercase font-black tracking-tighter">Puntuación Final</p>
+                        <div class="text-8xl font-black">${score}</div>
+                    </div><br>
+                    <button onclick="showMenu()" class="bg-blue-900 text-white px-14 py-5 rounded-3xl font-black shadow-xl hover:scale-110 transition-transform btn-press uppercase tracking-widest">Volver al Inicio</button>
+                </div>`;
+        }
+    </script>
+</body>
+</html>
