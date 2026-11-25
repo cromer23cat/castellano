@@ -9,7 +9,7 @@ Col·lecció d'eines web interactives i gamificades per al treball de la llengua
 ## 🚀 Aplicacions incloses
 
 ### 📖 Ortografia i Gramàtica General
-* **✍️ [Acentúa-T](https://cromer23cat.github.io/castellano/acentuacion/index.html)** — Minijocs interactius i diccionari de les regles d'accentuació en castellà (SEGA).
+* **✍️ [Acentúa-T](https://cromer23cat.github.io/castellano/acentuacion/index.html)** — Minijocs interactius i diccionari de les regles d'accentuació en castellà.
 * **🔍 [Exploradores de Determinantes](https://cromer23cat.github.io/castellano/Determinantes/index.html)** — Jocs de classificació i identificació de determinants en llengua castellana.
 * **🏷️ [Sustantivos Master](https://cromer23cat.github.io/castellano/Nombres/index.html)** — Guia d'estudi i minijocs interactius sobre classificació, gènere i nombre dels substantius en castellà.
 * **🦉 [B vs V (Ortografía Avanzada)](https://cromer23cat.github.io/castellano/LaBylaV/index.html)** — Jocs interactius, llibre de regles, homòfons i excepcions per dominar l'ortografia de la B i la V al Cicle Superior.
