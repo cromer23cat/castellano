@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ortografía Master: La B y la V (5.º Primaria)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <title>Ortografía Master: La B y la V (Ciclo Superior)</title>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            green: '#10B981',
+                            yellow: '#F59E0B',
+                            red: '#EF4444',
+                            pink: '#EC4899',
+                            dark: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        quicksand: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 100%);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, .font-heading {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        }
+
+        .btn-bounce {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-bounce:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+        .btn-bounce:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s infinite;
+        }
+
+        /* Particle effects overlay */
+        #canvas-confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white/90 backdrop-blur-md border-b border-purple-100 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.showScreen('menu')">
+                <div class="w-11 h-11 bg-gradient-to-tr from-purple-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-md">
+                    <i class="fa-solid fa-spell-check"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-slate-800 leading-none">B vs V <span class="text-xs bg-purple-100 text-purple-700 font-semibold px-2 py-0.5 rounded-full ml-1">Ciclo Superior</span></h1>
+                    <p class="text-xs text-slate-500 font-medium">¡Conviértete en un Maestro de la Ortografía!</p>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="flex items-center space-x-3 text-sm font-semibold">
+                <!-- Points -->
+                <div class="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-xl flex items-center space-x-2">
+                    <i class="fa-solid fa-star text-amber-500"></i>
+                    <span id="stat-points">0 pts</span>
+                </div>
+                <!-- Streak -->
+                <div class="bg-orange-50 text-orange-700 border border-orange-200 px-3 py-1.5 rounded-xl flex items-center space-x-2">
+                    <i class="fa-solid fa-fire text-orange-500"></i>
+                    <span id="stat-streak">0</span>
+                </div>
+                <!-- Audio Toggle -->
+                <button id="btn-sound" onclick="app.toggleSound()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center transition" title="Activar/Desactivar Sonido">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+                <!-- Rules Modal Toggle -->
+                <button onclick="app.openRulesModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-xl flex items-center space-x-1.5 shadow-sm text-sm transition font-medium">
+                    <i class="fa-solid fa-book"></i>
+                    <span class="hidden sm:inline">Reglas</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Canvas Confetti Overlay -->
+    <canvas id="canvas-confetti"></canvas>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <!-- ==================== MENU SCREEN ==================== -->
+        <section id="screen-menu" class="space-y-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-6 md:p-8 text-white card-shadow relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-3 z-10 text-center md:text-left max-w-xl">
+                    <div class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+                        ✨ Ortografía Avanzada • Ciclo Superior
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-extrabold leading-tight">¿B o V? Domina la ortografía avanzada</h2>
+                    <p class="text-purple-100 text-sm md:text-base">
+                        Pon a prueba tus conocimientos con reglas ortográficas completas, homófonos y excepciones de 5.º y 6.º de Primaria.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3 justify-center md:justify-start">
+                        <button onclick="app.startMode('practice')" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-6 py-3 rounded-2xl btn-bounce shadow-lg text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> ¡Jugar Ahora!
+                        </button>
+                        <button onclick="app.openRulesModal()" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-5 py-3 rounded-2xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> Ver Libro de Reglas
+                        </button>
+                    </div>
+                </div>
+                <div class="relative z-10 flex-shrink-0">
+                    <div class="w-32 h-32 md:w-40 md:h-40 bg-white/10 backdrop-blur-md rounded-full border-4 border-white/30 flex items-center justify-center text-6xl md:text-7xl shadow-inner animate-pulse-subtle">
+                        🦉
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modes Grid -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-purple-600"></i> Selecciona un Modo de Juego
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    
+                    <!-- Mode 1: Fill Blank -->
+                    <div onclick="app.startMode('practice')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-purple-300 card-shadow hover:shadow-lg cursor-pointer transition flex flex-col justify-between group btn-bounce">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl group-hover:bg-blue-600 group-hover:text-white transition">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-slate-800">Desafío B / V</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Completa los huecos de las palabras y repasa las reglas al instante.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600">
+                            <span>Empezar</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mode 2: Spelling Detective -->
+                    <div onclick="app.startMode('detective')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-purple-300 card-shadow hover:shadow-lg cursor-pointer transition flex flex-col justify-between group btn-bounce">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl group-hover:bg-purple-600 group-hover:text-white transition">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-slate-800">Detective</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Encuentra la palabra mal escrita en la oración y corrígela.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-purple-600">
+                            <span>Investigar</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mode 3: Time Trial -->
+                    <div onclick="app.startMode('timer')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-purple-300 card-shadow hover:shadow-lg cursor-pointer transition flex flex-col justify-between group btn-bounce">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl group-hover:bg-rose-600 group-hover:text-white transition">
+                                <i class="fa-solid fa-stopwatch"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-slate-800">A Todo Gas</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">¡Tienes 60 segundos! Acierta el máximo número de palabras.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-rose-600">
+                            <span>Desafío Relámpago</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mode 4: Rule Matcher -->
+                    <div onclick="app.startMode('ruleMatch')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-purple-300 card-shadow hover:shadow-lg cursor-pointer transition flex flex-col justify-between group btn-bounce">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl group-hover:bg-emerald-600 group-hover:text-white transition">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-slate-800">Clasificador</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Relaciona cada palabra con su regla ortográfica correspondiente.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
+                            <span>Clasificar</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Bottom Row: Notebook & Achievements -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Review Notebook -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 card-shadow flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Mi Cuaderno de Repaso</h4>
+                            <p class="text-xs text-slate-500"><span id="notebook-count">0</span> palabras guardadas para repasar.</p>
+                        </div>
+                    </div>
+                    <button onclick="app.startNotebookMode()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-xl text-sm transition">
+                        Repasar
+                    </button>
+                </div>
+
+                <!-- Achievements -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 card-shadow flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Medallas y Logros</h4>
+                            <p class="text-xs text-slate-500"><span id="badges-unlocked-count">0</span>/6 medallas desbloqueadas.</p>
+                        </div>
+                    </div>
+                    <button onclick="app.openBadgesModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-xl text-sm transition">
+                        Ver Medallas
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== GAMEPLAY SCREEN ==================== -->
+        <section id="screen-game" class="hidden space-y-6 max-w-2xl mx-auto w-full">
+            <!-- Progress Bar & Top Bar -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 card-shadow space-y-3">
+                <div class="flex items-center justify-between text-sm font-bold text-slate-600">
+                    <button onclick="app.showScreen('menu')" class="hover:text-slate-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-house"></i> Menú
+                    </button>
+                    <span id="game-mode-title" class="text-purple-600 font-extrabold uppercase tracking-wide">Desafío B / V</span>
+                    <span id="game-progress-text">1 / 10</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                    <div id="game-progress-bar" class="bg-gradient-to-r from-purple-500 to-indigo-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <!-- Timer display for Time Trial mode -->
+                <div id="timer-container" class="hidden flex items-center justify-center space-x-2 text-rose-600 font-bold text-lg pt-1">
+                    <i class="fa-solid fa-clock animate-pulse"></i>
+                    <span id="timer-count">60</span>s
+                </div>
+            </div>
+
+            <!-- Card Question Area -->
+            <div id="game-card" class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 card-shadow text-center space-y-6 relative">
+                <!-- Hint / Sentence -->
+                <div class="space-y-2">
+                    <span id="question-category" class="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full inline-block">
+                        Categoría
+                    </span>
+                    <div id="question-prompt" class="text-slate-600 font-medium text-base md:text-lg">
+                        Completa la palabra con B o V
+                    </div>
+                </div>
+
+                <!-- Main Display Word / Sentence -->
+                <div id="question-display" class="text-3xl md:text-5xl font-extrabold tracking-wider text-slate-800 py-4 min-h-[100px] flex items-center justify-center flex-wrap gap-2">
+                    <!-- Word with fill gap will render here -->
+                </div>
+
+                <!-- Interactive Buttons (B vs V choices) -->
+                <div id="options-b-v" class="flex justify-center items-center gap-4 md:gap-6 pt-2">
+                    <button onclick="app.submitChoice('B')" class="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-gradient-to-b from-blue-500 to-blue-600 text-white font-extrabold text-4xl card-shadow hover:from-blue-600 hover:to-blue-700 btn-bounce flex items-center justify-center border-b-4 border-blue-800">
+                        B
+                    </button>
+                    <button onclick="app.submitChoice('V')" class="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-gradient-to-b from-emerald-500 to-emerald-600 text-white font-extrabold text-4xl card-shadow hover:from-emerald-600 hover:to-emerald-700 btn-bounce flex items-center justify-center border-b-4 border-emerald-800">
+                        V
+                    </button>
+                </div>
+
+                <!-- Detective / Multiple Choice container (used for Detective or Classifier mode) -->
+                <div id="options-multiple" class="hidden grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                    <!-- Rendered dynamically -->
+                </div>
+
+                <!-- Explanation Banner (Shown after answer) -->
+                <div id="feedback-box" class="hidden p-4 rounded-2xl text-left space-y-2 transition-all">
+                    <div class="flex items-center space-x-2 font-bold text-lg" id="feedback-title">
+                        <!-- Icon + Title -->
+                    </div>
+                    <p id="feedback-text" class="text-sm leading-relaxed"></p>
+                    <div id="feedback-rule" class="text-xs font-semibold bg-white/60 p-2.5 rounded-xl border border-black/5 mt-2"></div>
+                </div>
+
+                <!-- Next Button -->
+                <div id="next-btn-container" class="hidden pt-2">
+                    <button onclick="app.nextQuestion()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-2xl transition btn-bounce text-base flex items-center justify-center gap-2">
+                        <span>Siguiente Pregunta</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SUMMARY / RESULTS SCREEN ==================== -->
+        <section id="screen-summary" class="hidden space-y-6 max-w-lg mx-auto w-full text-center">
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 card-shadow space-y-6">
+                <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-5xl mx-auto animate-bounce">
+                    🏆
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-3xl font-extrabold text-slate-800">¡Buen Trabajo!</h2>
+                    <p class="text-slate-500 text-sm">Has completado la sesión de práctica ortográfica.</p>
+                </div>
+
+                <!-- Score Stats Grid -->
+                <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                    <div>
+                        <span class="block text-xs font-semibold text-slate-400">Aciertos</span>
+                        <span id="summary-correct" class="text-xl font-extrabold text-emerald-600">0</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs font-semibold text-slate-400">Puntos</span>
+                        <span id="summary-points" class="text-xl font-extrabold text-amber-500">+0</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs font-semibold text-slate-400">Precisión</span>
+                        <span id="summary-accuracy" class="text-xl font-extrabold text-indigo-600">0%</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <button onclick="app.startMode(app.currentMode)" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-2xl btn-bounce transition shadow-md">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Jugar Otra Vez
+                    </button>
+                    <button onclick="app.showScreen('menu')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-2xl transition">
+                        Volver al Menú
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ==================== RULES MODAL ==================== -->
+    <div id="modal-rules" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col card-shadow overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-purple-50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800">Libro de Reglas de la B y la V</h3>
+                        <p class="text-xs text-purple-700">Contenido curricular del Ciclo Superior (5.º y 6.º de Primaria)</p>
+                    </div>
+                </div>
+                <button onclick="app.closeRulesModal()" class="w-8 h-8 rounded-full bg-white text-slate-400 hover:text-slate-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Rules Tabs -->
+            <div class="flex border-b border-slate-100 bg-slate-50 text-sm font-bold">
+                <button id="tab-btn-b" onclick="app.switchRuleTab('b')" class="flex-1 py-3 border-b-2 border-purple-600 text-purple-600">Reglas de la B</button>
+                <button id="tab-btn-v" onclick="app.switchRuleTab('v')" class="flex-1 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">Reglas de la V</button>
+                <button id="tab-btn-homo" onclick="app.switchRuleTab('homo')" class="flex-1 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">Tubo vs Tuvo</button>
+            </div>
+
+            <!-- Modal Body Scrollable -->
+            <div class="p-6 overflow-y-auto space-y-4 scrollbar-thin flex-grow text-sm">
+                
+                <!-- B Rules Content -->
+                <div id="tab-content-b" class="space-y-4">
+                    <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl">
+                        <span class="font-bold text-blue-800 block text-base mb-1">1. M antes de B (MB)</span>
+                        <p class="text-slate-600">Se escribe <b>B</b> siempre después de <b>M</b>.</p>
+                        <p class="text-xs text-blue-600 font-semibold mt-1">Ejemplos: tam<b>b</b>or, som<b>b</b>ra, cam<b>b</b>io, bom<b>b</b>ero.</p>
+                    </div>
+                    <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl">
+                        <span class="font-bold text-blue-800 block text-base mb-1">2. Combinaciones BRA, BLA</span>
+                        <p class="text-slate-600">Se escribe <b>B</b> ante las consonantes L y R (bla, ble, bli, blo, blu, bra, bre, bri, bro, bru).</p>
+                        <p class="text-xs text-blue-600 font-semibold mt-1">Ejemplos: <b>bl</b>anco, <b>br</b>azo, ca<b>bl</b>e, <b>br</b>isa.</p>
+                    </div>
+                    <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl">
+                        <span class="font-bold text-blue-800 block text-base mb-1">3. Verbos terminados en -BIR</span>
+                        <p class="text-slate-600">Se escriben con <b>B</b> todos los verbos acabados en <b>-bir</b>, <span class="underline">excepto hervir, servir y vivir</span>.</p>
+                        <p class="text-xs text-blue-600 font-semibold mt-1">Ejemplos: escri<b>bir</b>, reci<b>bir</b>, prohi<b>bir</b>.</p>
+                    </div>
+                    <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl">
+                        <span class="font-bold text-blue-800 block text-base mb-1">4. Pretérito imperfecto (-ABA)</span>
+                        <p class="text-slate-600">Las terminaciones del pretérito imperfecto de indicativo de los verbos de la 1.ª conjugación (-ar) y del verbo ir (iba).</p>
+                        <p class="text-xs text-blue-600 font-semibold mt-1">Ejemplos: cant<b>aba</b>, jug<b>ábamos</b>, soñ<b>abas</b>, <b>iba</b>.</p>
+                    </div>
+                    <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl">
+                        <span class="font-bold text-blue-800 block text-base mb-1">5. Empiezan por BU-, BUR-, BUS-</span>
+                        <p class="text-slate-600">Palabras que comienzan por las sílabas bu-, bur- o bus-.</p>
+                        <p class="text-xs text-blue-600 font-semibold mt-1">Ejemplos: <b>bu</b>fanda, <b>bur</b>buja, <b>bús</b>queda.</p>
+                    </div>
+                    <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl">
+                        <span class="font-bold text-blue-800 block text-base mb-1">6. Palabras con -BILIDAD y -BUNDO</span>
+                        <p class="text-slate-600">Terminaciones en -bundo, -bunda y -bilidad (<span class="underline">excepto movilidad y civilidad</span>).</p>
+                        <p class="text-xs text-blue-600 font-semibold mt-1">Ejemplos: amabi<b>lidad</b>, vaga<b>bundo</b>, responsabi<b>lidad</b>.</p>
+                    </div>
+                </div>
+
+                <!-- V Rules Content -->
+                <div id="tab-content-v" class="hidden space-y-4">
+                    <div class="p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                        <span class="font-bold text-emerald-800 block text-base mb-1">1. N antes de V (NV)</span>
+                        <p class="text-slate-600">Se escribe <b>V</b> siempre después de la letra <b>N</b>.</p>
+                        <p class="text-xs text-emerald-600 font-semibold mt-1">Ejemplos: e<b>nv</b>ase, i<b>nv</b>ierto, e<b>nv</b>iar, i<b>nv</b>ierno.</p>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                        <span class="font-bold text-emerald-800 block text-base mb-1">2. Adjetivos en -AVO, -EVA, -IVO, etc.</span>
+                        <p class="text-slate-600">Adjetivos que terminan en -avo, -ava, -evo, -eva, -eve, -ivo, -iva.</p>
+                        <p class="text-xs text-emerald-600 font-semibold mt-1">Ejemplos: nu<b>evo</b>, act<b>iva</b>, decisi<b>vo</b>, oct<b>avo</b>, br<b>eve</b>.</p>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                        <span class="font-bold text-emerald-800 block text-base mb-1">3. Después de AD-, SUB-, OB-</span>
+                        <p class="text-slate-600">Las palabras que empiezan o llevan los prefijos ad-, sub- u ob- seguidos de sonido V.</p>
+                        <p class="text-xs text-emerald-600 font-semibold mt-1">Ejemplos: <b>ad</b>verbio, <b>sub</b>versivo, <b>ob</b>vio.</p>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                        <span class="font-bold text-emerald-800 block text-base mb-1">4. Estuve, anduve, tuve</span>
+                        <p class="text-slate-600">Pretérito perfecto simple de los verbos estar, andar, tener y sus derivados.</p>
+                        <p class="text-xs text-emerald-600 font-semibold mt-1">Ejemplos: est<b>uve</b>, and<b>uvimos</b>, t<b>uvieron</b>.</p>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                        <span class="font-bold text-emerald-800 block text-base mb-1">5. Empiezan por VICE-, VILLA-</span>
+                        <p class="text-slate-600">Palabras que comienzan por vice-, villa- o vizc- (<span class="underline">excepto billar</span>).</p>
+                        <p class="text-xs text-emerald-600 font-semibold mt-1">Ejemplos: <b>vice</b>presidente, <b>villa</b>no.</p>
+                    </div>
+                </div>
+
+                <!-- Homophones Content -->
+                <div id="tab-content-homo" class="hidden space-y-4">
+                    <div class="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl space-y-1">
+                        <span class="font-bold text-amber-900 block text-base">Tubo vs Tuvo</span>
+                        <p class="text-slate-600"><b>Tubo (con B):</b> Objeto cilíndrico hueco. <i>Ej: "El tubo de la cañería."</i></p>
+                        <p class="text-slate-600"><b>Tuvo (con V):</b> Del verbo tener. <i>Ej: "Ayer tuvo mucha suerte."</i></p>
+                    </div>
+                    <div class="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl space-y-1">
+                        <span class="font-bold text-amber-900 block text-base">Haber vs A ver</span>
+                        <p class="text-slate-600"><b>Haber (con B):</b> Verbo auxiliar o verbo de existencia. <i>Ej: "Tiene que haber una solución."</i></p>
+                        <p class="text-slate-600"><b>A ver (con V):</b> Expresión formada por la preposición 'a' y el verbo 'ver'. <i>Ej: "¡Vamos a ver la película!"</i></p>
+                    </div>
+                    <div class="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl space-y-1">
+                        <span class="font-bold text-amber-900 block text-base">Hierba vs Hierva</span>
+                        <p class="text-slate-600"><b>Hierba (con B):</b> Planta pequeña y verde. <i>Ej: "El césped o la hierba del campo."</i></p>
+                        <p class="text-slate-600"><b>Hierva (con V):</b> Del verbo hervir. <i>Ej: "Espera a que el agua hierva."</i></p>
+                    </div>
+                    <div class="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl space-y-1">
+                        <span class="font-bold text-amber-900 block text-base">Rebelar vs Revelar</span>
+                        <p class="text-slate-600"><b>Rebelar (con B):</b> Oponer resistencia o sublevarse. <i>Ej: "Se rebelaron contra la injusticia."</i></p>
+                        <p class="text-slate-600"><b>Revelar (con V):</b> Descubrir un secreto o procesar una fotografía. <i>Ej: "Va a revelar el misterio."</i></p>
+                    </div>
+                    <div class="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl space-y-1">
+                        <span class="font-bold text-amber-900 block text-base">Bienes vs Vienes</span>
+                        <p class="text-slate-600"><b>Bienes (con B):</b> Propiedades o riqueza. <i>Ej: "Posee muchos bienes."</i></p>
+                        <p class="text-slate-600"><b>Vienes (con V):</b> Forma del verbo venir. <i>Ej: "¿Vienes al cine esta tarde?"</i></p>
+                    </div>
+                    <div class="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl space-y-1">
+                        <span class="font-bold text-amber-900 block text-base">Baca vs Vaca</span>
+                        <p class="text-slate-600"><b>Baca (con B):</b> Portaequipajes del coche. <i>Ej: "Puso las maletas en la baca."</i></p>
+                        <p class="text-slate-600"><b>Vaca (con V):</b> Animal rumiante. <i>Ej: "La vaca da leche fresca."</i></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-slate-50 border-t border-slate-100 text-center">
+                <button onclick="app.closeRulesModal()" class="bg-purple-600 text-white font-bold px-6 py-2 rounded-xl hover:bg-purple-700 transition text-sm">
+                    ¡Entendido, a practicar!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== BADGES MODAL ==================== -->
+    <div id="modal-badges" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 card-shadow space-y-5">
+            <div class="flex items-center justify-between border-b pb-3 border-slate-100">
+                <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-500"></i> Medallas de Ortografía
+                </h3>
+                <button onclick="app.closeBadgesModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="badges-list" class="grid grid-cols-2 gap-3 text-center">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==================== EXPANDED DATABASE FOR CICLO SUPERIOR ==================== */
+        const QUESTION_DATABASE = [
+            // Rule 1: MB / NV
+            { word: "tam_or", answer: "B", full: "tambor", hint: "Instrumento musical de percusión", category: "MB / NV", rule: "Se escribe B siempre después de M (MB)." },
+            { word: "i_vierno", answer: "V", full: "invierno", hint: "La estación más fría del año", category: "MB / NV", rule: "Se escribe V siempre después de N (NV)." },
+            { word: "e_vase", answer: "V", full: "envase", hint: "Recipiente para guardar alimentos o productos", category: "MB / NV", rule: "Se escribe V siempre después de N (NV)." },
+            { word: "som_rilla", answer: "B", full: "sombrilla", hint: "Sirve para protegerse del sol", category: "MB / NV", rule: "Se escribe B siempre después de M y antes de R." },
+            { word: "bom_ero", answer: "B", full: "bombero", hint: "Profesional que apaga los incendios", category: "MB / NV", rule: "Se escribe B siempre después de M." },
+            { word: "i_vento", answer: "V", full: "invento", hint: "Creación o hallazgo novedoso", category: "MB / NV", rule: "Se escribe V siempre después de N." },
+            { word: "escom_ros", answer: "B", full: "escombros", hint: "Restos de un edificio derribado", category: "MB / NV", rule: "Se escribe B siempre después de M." },
+            { word: "co_vención", answer: "V", full: "convención", hint: "Reunión de especialistas o norma aceptada", category: "MB / NV", rule: "Se escribe V siempre después de N." },
+            { word: "e_balse", answer: "B", full: "embalse", hint: "Gran depósito artificial de agua", category: "MB / NV", rule: "Se escribe B siempre después de M." },
+            { word: "tran_ía", answer: "V", full: "tranvía", hint: "Medio de transporte sobre raíles urbanos", category: "MB / NV", rule: "Se escribe V siempre después de N." },
+
+            // Rule 2: BRA / BLA
+            { word: "ca_le", answer: "B", full: "cable", hint: "Conductor eléctrico flexible", category: "BLA / BRA", rule: "Se escribe B ante las consonantes L o R (BLA)." },
+            { word: "som_ra", answer: "B", full: "sombra", hint: "Zonas oscuras donde no da la luz", category: "BLA / BRA", rule: "Se escribe B ante las consonantes L o R (BRA)." },
+            { word: "_lanco", answer: "B", full: "blanco", hint: "El color más claro de la escala", category: "BLA / BRA", rule: "Se escribe B ante las consonantes L o R (BLA)." },
+            { word: "_risa", answer: "B", full: "brisa", hint: "Viento suave y agradable", category: "BLA / BRA", rule: "Se escribe B ante las consonantes L o R (BRA)." },
+            { word: "a_rumador", answer: "B", full: "abrumador", hint: "Algo que agobia por su gran cantidad o intensidad", category: "BLA / BRA", rule: "Se escribe B ante las consonantes L o R (BRU)." },
+            { word: "_rújula", answer: "B", full: "brújula", hint: "Instrumento con aguja imantada para orientarse", category: "BLA / BRA", rule: "Se escribe B ante la consonante R (BRÚ)." },
+
+            // Rule 3: Verbs in -BIR (exceptions: hervir, servir, vivir, convivir)
+            { word: "escri_ir", answer: "B", full: "escribir", hint: "Redactar un texto o mensaje", category: "Verbos en -BIR", rule: "Se escriben con B todos los verbos acabados en -bir." },
+            { word: "reci_ir", answer: "B", full: "recibir", hint: "Obtener un paquete o carta", category: "Verbos en -BIR", rule: "Se escriben con B todos los verbos acabados en -bir." },
+            { word: "prohi_ir", answer: "B", full: "prohibir", hint: "Impedir o no permitir una acción", category: "Verbos en -BIR", rule: "Se escriben con B todos los verbos acabados en -bir." },
+            { word: "perci_ir", answer: "B", full: "percibir", hint: "Notar o comprender una sensación", category: "Verbos en -BIR", rule: "Se escriben con B todos los verbos acabados en -bir." },
+            { word: "conci_ir", answer: "B", full: "concebir", hint: "Idear o imaginar un plan", category: "Verbos en -BIR", rule: "Se escriben con B todos los verbos acabados en -bir." },
+            { word: "sucum_ir", answer: "B", full: "sucumbir", hint: "Ceder ante una fuerza o dificultad", category: "Verbos en -BIR", rule: "Se escriben con B todos los verbos acabados en -bir." },
+            { word: "ser_ir", answer: "V", full: "servir", hint: "Atender a alguien / ser útil", category: "Excepciones en -VIR", rule: "Excepción: servir, hervir y vivir se escriben con V." },
+            { word: "her_ir", answer: "V", full: "hervir", hint: "Calentar un líquido hasta que alcance la ebullición", category: "Excepciones en -VIR", rule: "Excepción: hervir, servir y vivir se escriben con V." },
+            { word: "con_ivir", answer: "V", full: "convivir", hint: "Vivir en compañía de otras personas", category: "Excepciones en -VIR", rule: "Los derivados del verbo vivir (convivir, revivir) llevan V." },
+
+            // Rule 4: Imperfect Past -ABA & Verbs
+            { word: "cant_ba", answer: "B", full: "cantaba", hint: "Pretérito imperfecto de cantar", category: "Pretérito -ABA", rule: "Las terminaciones -aba del pretérito imperfecto se escriben con B." },
+            { word: "jugá_amos", answer: "B", full: "jugábamos", hint: "Pretérito imperfecto de jugar", category: "Pretérito -ABA", rule: "Las terminaciones -ábamos del pretérito imperfecto llevan B." },
+            { word: "na_egaba", answer: "V", full: "navegaba", hint: "Pretérito imperfecto de navegar (observa la V de navegar)", category: "Pretérito -ABA / V", rule: "La terminación -aba lleva B, pero la raíz de navegar lleva V." },
+            { word: "i_a", answer: "B", full: "iba", hint: "Pasado del verbo ir (1.ª persona)", category: "Verbo IR", rule: "Todas las formas del pretérito imperfecto de ir llevan B (iba, ibas, íbamos...)." },
+
+            // Rule 5: Adjectives ending in -IVO, -EVA, -AVO, -EVE, -AVE
+            { word: "nu_evo", answer: "V", full: "nuevo", hint: "Que se ha hecho o adquirido recientemente", category: "Adjetivos en -EVO", rule: "Los adjetivos terminados en -evo, -eva, -ivo, -iva se escriben con V." },
+            { word: "act_iva", answer: "V", full: "activa", hint: "Persona dinámica que realiza muchas tareas", category: "Adjetivos en -IVA", rule: "Los adjetivos terminados en -iva se escriben con V." },
+            { word: "decisi_vo", answer: "V", full: "decisivo", hint: "Que determina el resultado final de algo", category: "Adjetivos en -IVO", rule: "Los adjetivos terminados en -ivo se escriben con V." },
+            { word: "br_eve", answer: "V", full: "breve", hint: "De corta duración o extensión", category: "Adjetivos en -EVE", rule: "Los adjetivos terminados en -eve se escriben con V." },
+            { word: "sua_e", answer: "V", full: "suave", hint: "Agradable al tacto y sin asperezas", category: "Adjetivos en -AVE", rule: "Los adjetivos terminados en -ave se escriben con V." },
+            { word: "destructi_vo", answer: "V", full: "destructivo", hint: "Que arruina o destruye cosas", category: "Adjetivos en -IVO", rule: "Los adjetivos terminados en -ivo se escriben con V." },
+            { word: "pensati_vo", answer: "V", full: "pensativo", hint: "Que está concentrado en sus pensamientos", category: "Adjetivos en -IVO", rule: "Los adjetivos terminados en -ivo se escriben con V." },
+
+            // Rule 6: BU-, BUR-, BUS-
+            { word: "_ufanda", answer: "B", full: "bufanda", hint: "Prenda de vestir para abrigar el cuello", category: "BU-, BUR-, BUS-", rule: "Las palabras que comienzan por bu- se escriben con B." },
+            { word: "_urbuja", answer: "B", full: "burbuja", hint: "Globito de aire en la superficie de un líquido", category: "BU-, BUR-, BUS-", rule: "Las palabras que comienzan por bur- se escriben con B." },
+            { word: "_úsqueda", answer: "B", full: "búsqueda", hint: "Acción de buscar a alguien o algo", category: "BU-, BUR-, BUS-", rule: "Las palabras que comienzan por bus- se escriben con B." },
+            { word: "_ullicio", answer: "B", full: "bullicio", hint: "Ruido constante hecho por mucha gente", category: "BU-, BUR-, BUS-", rule: "Las palabras que empiezan por bu- se escriben con B." },
+
+            // Rule 7: Preterites in -UVE / -UVIERON (estuve, anduve, tuve, mantuve)
+            { word: "est_ve", answer: "V", full: "estuve", hint: "Pretérito perfecto simple de estar", category: "Verbos en -UVE", rule: "Pretéritos fuertes como estuve, anduve o tuve se escriben con V." },
+            { word: "and_vimos", answer: "V", full: "anduvimos", hint: "Paseamos o recorrimos un camino", category: "Verbos en -UVE", rule: "Las formas del verbo andar en pasado (anduve, anduviste...) llevan V." },
+            { word: "t_vieron", answer: "V", full: "tuvieron", hint: "Pretérito del verbo tener", category: "Verbos en -UVE", rule: "Las formas del verbo tener en pretérito perfecto llevan V." },
+            { word: "mant_vo", answer: "V", full: "mantuvo", hint: "Conservó en el mismo estado o posición", category: "Verbos en -UVE", rule: "Los derivados de tener (mantener, contener, retener) en pretérito llevan V." },
+
+            // Rule 8: AD-, SUB-, OB-
+            { word: "ad_erbio", answer: "V", full: "adverbio", hint: "Clase de palabra invariables (ej. rápidamente)", category: "AD- / SUB- / OB-", rule: "Tras la secuencia o prefijo ad- se escribe V." },
+            { word: "ob_io", answer: "V", full: "obvio", hint: "Evidente o tan claro que no necesita explicación", category: "AD- / SUB- / OB-", rule: "Tras la secuencia ob- se escribe V." },
+            { word: "ad_ersario", answer: "V", full: "adversario", hint: "Persona contraria en una competición o debate", category: "AD- / SUB- / OB-", rule: "Tras el prefijo ad- se escribe V." },
+            { word: "su_versivo", answer: "V", full: "subversivo", hint: "Que intenta alterar el orden establecido", category: "AD- / SUB- / OB-", rule: "Tras el prefijo sub- con sonido v, se escribe V." },
+
+            // Rule 9: -BILIDAD & -BUNDO
+            { word: "amabi_idad", answer: "B", full: "amabilidad", hint: "Trato afectuoso y respetuoso hacia los demás", category: "-BILIDAD / -BUNDO", rule: "Palabras acabadas en -bilidad se escriben con B (excepto movilidad y civilidad)." },
+            { word: "vaga_undo", answer: "B", full: "vagabundo", hint: "Que anda de un lugar a otro sin residencia fija", category: "-BILIDAD / -BUNDO", rule: "Palabras terminadas en -bundo y -bunda se escriben con B." },
+            { word: "medita_undo", answer: "B", full: "meditabundo", hint: "Sumido en hondas reflexiones", category: "-BILIDAD / -BUNDO", rule: "Palabras terminadas en -bundo se escriben con B." },
+            { word: "responsa_ilidad", answer: "B", full: "responsabilidad", hint: "Obligación de responder por nuestros actos", category: "-BILIDAD / -BUNDO", rule: "Palabras acabadas en -bilidad se escriben con B." },
+            { word: "moti_idad", answer: "V", full: "movilidad", hint: "Capacidad de moverse libremente", category: "Excepciones -BILIDAD", rule: "Excepción: movilidad y civilidad provienen de móvil y civil, por lo que llevan V." },
+
+            // Rule 10: Prefixes BI-, BIS-, BIZ- (meaning two/twice)
+            { word: "_isabuelo", answer: "B", full: "bisabuelo", hint: "El padre de tu abuelo o abuela", category: "BI- / BIS- / BIZ-", rule: "El prefijo bis- (que significa dos veces) se escribe con B." },
+            { word: "_izcocho", answer: "B", full: "bizcocho", hint: "Masa dulce horneada (cocida dos veces)", category: "BI- / BIS- / BIZ-", rule: "El prefijo biz- se escribe con B." },
+            { word: "_icolor", answer: "B", full: "bicolor", hint: "Objeto que combina dos colores distintos", category: "BI- / BIS- / BIZ-", rule: "El prefijo bi- (dos) se escribe con B." },
+
+            // Rule 11: Homophones (Tubo/Tuvo, Rebelar/Revelar, Bienes/Vienes, etc.)
+            { word: "tu_o", answer: "B", full: "tubo", hint: "Pieza hueca y cilíndrica de fontanería", category: "Homófonos", rule: "'Tubo' (cilindro) se escribe con B. 'Tuvo' (verbo tener) con V." },
+            { word: "re_elar", answer: "V", full: "revelar", hint: "Dar a conocer un secreto o procesar una foto", category: "Homófonos", rule: "'Revelar' (secretos/fotos) es con V. 'Rebelar' (sublevarse) con B." },
+            { word: "_ienes", answer: "B", full: "bienes", hint: "Patrimonio, pertenencias o propiedades", category: "Homófonos", rule: "'Bienes' (riqueza) es con B. 'Vienes' (verbo venir) con V." }
+        ];
+
+        const DETECTIVE_DATABASE = [
+            {
+                sentence: "El bombero tubó que apagar el fuego del edificio rápidamente.",
+                wrong: "tubó",
+                correct: "tuvo",
+                rule: "'Tuvo' del verbo tener se escribe con V. 'Tubo' con B es una pieza cilíndrica hueca."
+            },
+            {
+                sentence: "Ayer estube analizando la lección de gramática con el profesor.",
+                wrong: "estube",
+                correct: "estuve",
+                rule: "El pretérito del verbo estar (estuve, estuviste...) se escribe siempre con V."
+            },
+            {
+                sentence: "Debes escrivir un resumen extenso para el examen final.",
+                wrong: "escrivir",
+                correct: "escribir",
+                rule: "Los verbos terminados en -bir se escriben con B (excepto hervir, servir y vivir)."
+            },
+            {
+                sentence: "Guardó los alimentos en un enbase hermético de cristal.",
+                wrong: "enbase",
+                correct: "envase",
+                rule: "Se escribe V siempre después de la consonante N (NV)."
+            },
+            {
+                sentence: "En ynvierno solíamos cantar villancicos junto a la chimenea.",
+                wrong: "ynvierno",
+                correct: "invierno",
+                rule: "Se escribe con I inicial e 'invierno' lleva V tras la N."
+            },
+            {
+                sentence: "Aquel viajero vagavundo demostró gran amabilidad durante la velada.",
+                wrong: "vagavundo",
+                correct: "vagabundo",
+                rule: "Las palabras terminadas en el sufijo -bundo o -bunda se escriben siempre con B."
+            },
+            {
+                sentence: "El científico decidió rebelar el misterio tras descubrir la fórmula.",
+                wrong: "rebelar",
+                correct: "revelar",
+                rule: "'Revelar' (descubrir un secreto o una foto) se escribe con V. 'Rebelar' (sublevarse) va con B."
+            },
+            {
+                sentence: "La mobilidad en el centro de la ciudad fue restablecida a mediodía.",
+                wrong: "mobilidad",
+                correct: "movilidad",
+                rule: "Movilidad es una excepción a la regla de -bilidad porque proviene del adjetivo 'móvil'."
+            },
+            {
+                sentence: "El visabuelo contó divertidas anécdotas durante el almuerzo.",
+                wrong: "visabuelo",
+                correct: "bisabuelo",
+                rule: "El prefijo bi-/bis-/biz- (que significa dos o dos veces) se escribe con B."
+            },
+            {
+                sentence: "Los excursionistas andubieron varias horas por el sendero nevado.",
+                wrong: "andubieron",
+                correct: "anduvieron",
+                rule: "El pretérito perfecto del verbo andar (anduve, anduvieron) se escribe con V."
+            }
+        ];
+
+        /* ==================== APP STATE & CONTROLLER ==================== */
+        class App {
+            constructor() {
+                this.points = parseInt(localStorage.getItem('b_v_points')) || 0;
+                this.streak = 0;
+                this.soundEnabled = true;
+                this.notebook = JSON.parse(localStorage.getItem('b_v_notebook')) || [];
+                this.badges = JSON.parse(localStorage.getItem('b_v_badges')) || {
+                    novice: true,
+                    streak5: false,
+                    detective: false,
+                    speed: false,
+                    master: false,
+                    reviewer: false
+                };
+
+                this.currentMode = 'practice';
+                this.questions = [];
+                this.currentIndex = 0;
+                this.sessionCorrect = 0;
+                this.timerInterval = null;
+                this.timeLeft = 60;
+
+                // Web Audio API Context
+                this.audioCtx = null;
+
+                this.initUI();
+            }
+
+            initUI() {
+                this.updateHeaderStats();
+                this.updateNotebookCount();
+                this.renderBadges();
+            }
+
+            // Audio Synthesis (No external files needed)
+            playSound(type) {
+                if (!this.soundEnabled) return;
+                try {
+                    if (!this.audioCtx) {
+                        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                    if (this.audioCtx.state === 'suspended') {
+                        this.audioCtx.resume();
+                    }
+
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+
+                    const now = this.audioCtx.currentTime;
+
+                    if (type === 'correct') {
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(523.25, now); // C5
+                        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+                        gain.gain.setValueAtTime(0.2, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                        osc.start(now);
+                        osc.stop(now + 0.3);
+                    } else if (type === 'wrong') {
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(220, now); // A3
+                        osc.frequency.setValueAtTime(180, now + 0.1);
+                        gain.gain.setValueAtTime(0.2, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                        osc.start(now);
+                        osc.stop(now + 0.3);
+                    } else if (type === 'fanfare') {
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(440, now);
+                        osc.frequency.setValueAtTime(554.37, now + 0.1);
+                        osc.frequency.setValueAtTime(659.25, now + 0.2);
+                        gain.gain.setValueAtTime(0.25, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                        osc.start(now);
+                        osc.stop(now + 0.5);
+                    }
+                } catch (e) {
+                    console.error("Audio error", e);
+                }
+            }
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                const btn = document.getElementById('btn-sound');
+                btn.innerHTML = this.soundEnabled 
+                    ? '<i class="fa-solid fa-volume-high"></i>' 
+                    : '<i class="fa-solid fa-volume-xmark text-rose-500"></i>';
+            }
+
+            updateHeaderStats() {
+                document.getElementById('stat-points').innerText = `${this.points} pts`;
+                document.getElementById('stat-streak').innerText = this.streak;
+                localStorage.setItem('b_v_points', this.points);
+            }
+
+            updateNotebookCount() {
+                document.getElementById('notebook-count').innerText = this.notebook.length;
+                localStorage.setItem('b_v_notebook', JSON.stringify(this.notebook));
+            }
+
+            showScreen(screenId) {
+                // Clear any running timers
+                if (this.timerInterval) clearInterval(this.timerInterval);
+
+                ['screen-menu', 'screen-game', 'screen-summary'].forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                });
+                document.getElementById(`screen-${screenId}`).classList.remove('hidden');
+            }
+
+            startMode(mode) {
+                this.currentMode = mode;
+                this.currentIndex = 0;
+                this.sessionCorrect = 0;
+
+                // Reset UI containers
+                document.getElementById('timer-container').classList.add('hidden');
+                document.getElementById('options-b-v').classList.remove('hidden');
+                document.getElementById('options-multiple').classList.add('hidden');
+                document.getElementById('feedback-box').classList.add('hidden');
+                document.getElementById('next-btn-container').classList.add('hidden');
+
+                if (mode === 'practice') {
+                    document.getElementById('game-mode-title').innerText = "Desafío B / V";
+                    this.questions = [...QUESTION_DATABASE].sort(() => Math.random() - 0.5).slice(0, 10);
+                } else if (mode === 'detective') {
+                    document.getElementById('game-mode-title').innerText = "Detective Ortográfico";
+                    document.getElementById('options-b-v').classList.add('hidden');
+                    document.getElementById('options-multiple').classList.remove('hidden');
+                    this.questions = [...DETECTIVE_DATABASE].sort(() => Math.random() - 0.5);
+                } else if (mode === 'timer') {
+                    document.getElementById('game-mode-title').innerText = "A Todo Gas (60s)";
+                    document.getElementById('timer-container').classList.remove('hidden');
+                    this.timeLeft = 60;
+                    document.getElementById('timer-count').innerText = this.timeLeft;
+                    this.questions = [...QUESTION_DATABASE].sort(() => Math.random() - 0.5);
+                    this.startTimer();
+                } else if (mode === 'ruleMatch') {
+                    document.getElementById('game-mode-title').innerText = "Clasificador de Reglas";
+                    this.questions = [...QUESTION_DATABASE].sort(() => Math.random() - 0.5).slice(0, 10);
+                }
+
+                this.showScreen('game');
+                this.renderQuestion();
+            }
+
+            startNotebookMode() {
+                if (this.notebook.length === 0) {
+                    alert("¡Tu cuaderno de repaso está vacío! Se añadiran palabras cuando te equivoces en los juegos.");
+                    return;
+                }
+                this.currentMode = 'notebook';
+                this.currentIndex = 0;
+                this.sessionCorrect = 0;
+                document.getElementById('game-mode-title').innerText = "Repaso de Errores";
+                document.getElementById('timer-container').classList.add('hidden');
+                document.getElementById('options-b-v').classList.remove('hidden');
+                document.getElementById('options-multiple').classList.add('hidden');
+                document.getElementById('feedback-box').classList.add('hidden');
+                document.getElementById('next-btn-container').classList.add('hidden');
+
+                this.questions = [...this.notebook];
+                this.showScreen('game');
+                this.renderQuestion();
+            }
+
+            startTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    document.getElementById('timer-count').innerText = this.timeLeft;
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        this.unlockBadge('speed');
+                        this.finishSession();
+                    }
+                }, 1000);
+            }
+
+            renderQuestion() {
+                const q = this.questions[this.currentIndex];
+                const total = this.questions.length;
+                
+                // Progress
+                const pct = Math.round(((this.currentIndex) / total) * 100);
+                document.getElementById('game-progress-bar').style.width = `${pct}%`;
+                document.getElementById('game-progress-text').innerText = `${this.currentIndex + 1} / ${total}`;
+
+                // Hide feedback
+                document.getElementById('feedback-box').classList.add('hidden');
+                document.getElementById('next-btn-container').classList.add('hidden');
+
+                if (this.currentMode === 'practice' || this.currentMode === 'timer' || this.currentMode === 'notebook' || this.currentMode === 'ruleMatch') {
+                    document.getElementById('question-category').innerText = q.category || 'Ortografía';
+                    document.getElementById('question-prompt').innerText = q.hint ? `Pista: "${q.hint}"` : 'Completa la palabra correctamente';
+                    
+                    // Render word with gap
+                    const formatted = q.word.replace('_', '<span class="inline-block border-b-4 border-purple-600 text-purple-600 px-3 py-1 mx-1 bg-purple-50 rounded-lg animate-pulse">?</span>');
+                    document.getElementById('question-display').innerHTML = formatted;
+
+                    // Enable B / V buttons
+                    const btnB = document.querySelector("#options-b-v button:first-child");
+                    const btnV = document.querySelector("#options-b-v button:last-child");
+                    btnB.disabled = false;
+                    btnV.disabled = false;
+                    btnB.className = "w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-gradient-to-b from-blue-500 to-blue-600 text-white font-extrabold text-4xl card-shadow hover:from-blue-600 hover:to-blue-700 btn-bounce flex items-center justify-center border-b-4 border-blue-800";
+                    btnV.className = "w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-gradient-to-b from-emerald-500 to-emerald-600 text-white font-extrabold text-4xl card-shadow hover:from-emerald-600 hover:to-emerald-700 btn-bounce flex items-center justify-center border-b-4 border-emerald-800";
+
+                } else if (this.currentMode === 'detective') {
+                    document.getElementById('question-category').innerText = "Detective Ortográfico";
+                    document.getElementById('question-prompt').innerText = "Encuentra el error ortográfico en esta oración:";
+                    document.getElementById('question-display').innerHTML = `<p class="text-2xl text-slate-700 font-semibold leading-relaxed">"${q.sentence}"</p>`;
+
+                    // Create 3 option buttons for detective mode
+                    const container = document.getElementById('options-multiple');
+                    container.innerHTML = '';
+                    
+                    // Options: wrong word, correct word, and another distractor
+                    const options = [
+                        { text: `Corregir "${q.wrong}" a "${q.correct}"`, correct: true },
+                        { text: `La oración está 100% correcta`, correct: false },
+                        { text: `Cambiar otra palabra por error`, correct: false }
+                    ].sort(() => Math.random() - 0.5);
+
+                    options.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = "p-4 bg-slate-100 hover:bg-purple-100 border border-slate-200 hover:border-purple-300 font-bold rounded-2xl text-slate-800 transition text-left text-base flex items-center justify-between";
+                        btn.innerHTML = `<span>${opt.text}</span> <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>`;
+                        btn.onclick = () => this.submitDetectiveChoice(opt.correct, q);
+                        container.appendChild(btn);
+                    });
+                }
+            }
+
+            submitChoice(choice) {
+                const q = this.questions[this.currentIndex];
+                const isCorrect = (choice === q.answer);
+
+                // Disable buttons
+                const btnB = document.querySelector("#options-b-v button:first-child");
+                const btnV = document.querySelector("#options-b-v button:last-child");
+                btnB.disabled = true;
+                btnV.disabled = true;
+
+                // Display complete word
+                const coloredLetter = isCorrect 
+                    ? `<span class="text-emerald-600 font-bold border-b-4 border-emerald-500 px-2">${q.answer}</span>`
+                    : `<span class="text-rose-600 font-bold border-b-4 border-rose-500 px-2 line-through">${choice}</span> <span class="text-emerald-600 font-bold">(${q.answer})</span>`;
+                
+                document.getElementById('question-display').innerHTML = q.word.replace('_', coloredLetter);
+
+                this.processAnswerResult(isCorrect, q);
+            }
+
+            submitDetectiveChoice(isCorrect, q) {
+                const container = document.getElementById('options-multiple');
+                Array.from(container.children).forEach(b => b.disabled = true);
+                this.unlockBadge('detective');
+                this.processAnswerResult(isCorrect, q);
+            }
+
+            processAnswerResult(isCorrect, q) {
+                const feedbackBox = document.getElementById('feedback-box');
+                const feedbackTitle = document.getElementById('feedback-title');
+                const feedbackText = document.getElementById('feedback-text');
+                const feedbackRule = document.getElementById('feedback-rule');
+
+                feedbackBox.classList.remove('hidden');
+
+                if (isCorrect) {
+                    this.playSound('correct');
+                    this.points += 10;
+                    this.streak++;
+                    this.sessionCorrect++;
+
+                    if (this.streak >= 5) this.unlockBadge('streak5');
+
+                    feedbackBox.className = "p-4 rounded-2xl text-left space-y-2 transition-all bg-emerald-50 border border-emerald-200 text-emerald-900";
+                    feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> <span>¡Excelente! Respuesta Correcta</span>`;
+                    feedbackText.innerText = `Palabra completa: "${q.full || q.correct}".`;
+                    feedbackRule.innerText = `💡 Regla Ortográfica: ${q.rule}`;
+
+                    // Remove from notebook if practicing notebook
+                    if (this.currentMode === 'notebook') {
+                        this.notebook = this.notebook.filter(item => item.word !== q.word);
+                        this.updateNotebookCount();
+                    }
+
+                } else {
+                    this.playSound('wrong');
+                    this.streak = 0;
+
+                    feedbackBox.className = "p-4 rounded-2xl text-left space-y-2 transition-all bg-rose-50 border border-rose-200 text-rose-900";
+                    feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600"></i> <span>¡Casi! Revisa la regla</span>`;
+                    feedbackText.innerText = `La forma correcta es "${q.full || q.correct}".`;
+                    feedbackRule.innerText = `💡 Recuerda: ${q.rule}`;
+
+                    // Save word to notebook for review
+                    if (q.word && !this.notebook.some(item => item.word === q.word)) {
+                        this.notebook.push(q);
+                        this.updateNotebookCount();
+                    }
+                }
+
+                this.updateHeaderStats();
+                document.getElementById('next-btn-container').classList.remove('hidden');
+            }
+
+            nextQuestion() {
+                this.currentIndex++;
+                if (this.currentIndex >= this.questions.length) {
+                    this.finishSession();
+                } else {
+                    this.renderQuestion();
+                }
+            }
+
+            finishSession() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+
+                this.playSound('fanfare');
+                this.triggerConfetti();
+
+                const total = this.questions.length;
+                const accuracy = Math.round((this.sessionCorrect / total) * 100) || 0;
+
+                document.getElementById('summary-correct').innerText = `${this.sessionCorrect} / ${total}`;
+                document.getElementById('summary-points').innerText = `+${this.sessionCorrect * 10}`;
+                document.getElementById('summary-accuracy').innerText = `${accuracy}%`;
+
+                if (accuracy === 100) this.unlockBadge('master');
+
+                this.showScreen('summary');
+            }
+
+
+            // Confetti effect
+            triggerConfetti() {
+                const canvas = document.getElementById('canvas-confetti');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                const particles = [];
+                const colors = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
+
+                for (let i = 0; i < 80; i++) {
+                    particles.push({
+                        x: canvas.width / 2,
+                        y: canvas.height / 2,
+                        vx: (Math.random() - 0.5) * 12,
+                        vy: (Math.random() - 0.8) * 12,
+                        size: Math.random() * 8 + 4,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 100
+                    });
+                }
+
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    let active = false;
+                    particles.forEach(p => {
+                        if (p.life > 0) {
+                            active = true;
+                            p.x += p.vx;
+                            p.y += p.vy;
+                            p.vy += 0.2; // gravity
+                            p.life--;
+                            ctx.fillStyle = p.color;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    });
+                    if (active) requestAnimationFrame(animate);
+                }
+                animate();
+            }
+
+            // Badges System
+            unlockBadge(key) {
+                if (!this.badges[key]) {
+                    this.badges[key] = true;
+                    localStorage.setItem('b_v_badges', JSON.stringify(this.badges));
+                    this.renderBadges();
+                }
+            }
+
+            renderBadges() {
+                const badgeData = [
+                    { key: 'novice', name: 'Principiante', icon: 'fa-seedling', desc: 'Inicia tu primera sesión' },
+                    { key: 'streak5', name: 'Imparable', icon: 'fa-fire', desc: 'Racha de 5 aciertos seguidos' },
+                    { key: 'detective', name: 'Gran Detective', icon: 'fa-magnifying-glass', desc: 'Resuelve un caso en Detective' },
+                    { key: 'speed', name: 'Velocista', icon: 'fa-bolt', desc: 'Juega en el modo A Todo Gas' },
+                    { key: 'master', name: 'Perfeccionista', icon: 'fa-crown', desc: 'Consigue 100% de precisión' },
+                    { key: 'reviewer', name: 'Estudioso', icon: 'fa-book-open', desc: 'Consulta el libro de reglas' }
+                ];
+
+                const container = document.getElementById('badges-list');
+                container.innerHTML = '';
+
+                let unlockedCount = 0;
+
+                badgeData.forEach(b => {
+                    const isUnlocked = this.badges[b.key];
+                    if (isUnlocked) unlockedCount++;
+
+                    const div = document.createElement('div');
+                    div.className = `p-3 rounded-2xl border flex flex-col items-center justify-center space-y-1.5 ${
+                        isUnlocked 
+                            ? 'bg-purple-50 border-purple-200 text-purple-900' 
+                            : 'bg-slate-50 border-slate-200 text-slate-400 opacity-60'
+                    }`;
+                    div.innerHTML = `
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
+                            isUnlocked ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-500'
+                        }">
+                            <i class="fa-solid ${b.icon}"></i>
+                        </div>
+                        <span class="font-bold text-xs">${b.name}</span>
+                        <span class="text-[10px] text-center leading-tight">${b.desc}</span>
+                    `;
+                    container.appendChild(div);
+                });
+
+                document.getElementById('badges-unlocked-count').innerText = unlockedCount;
+            }
+
+            // Modals Logic
+            openRulesModal() {
+                this.unlockBadge('reviewer');
+                document.getElementById('modal-rules').classList.remove('hidden');
+            }
+            closeRulesModal() {
+                document.getElementById('modal-rules').classList.add('hidden');
+            }
+
+            openBadgesModal() {
+                document.getElementById('modal-badges').classList.remove('hidden');
+            }
+            closeBadgesModal() {
+                document.getElementById('modal-badges').classList.add('hidden');
+            }
+
+            switchRuleTab(tab) {
+                ['b', 'v', 'homo'].forEach(t => {
+                    document.getElementById(`tab-content-${t}`).classList.add('hidden');
+                    const btn = document.getElementById(`tab-btn-${t}`);
+                    btn.className = "flex-1 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800";
+                });
+
+                document.getElementById(`tab-content-${tab}`).classList.remove('hidden');
+                const activeBtn = document.getElementById(`tab-btn-${tab}`);
+                activeBtn.className = "flex-1 py-3 border-b-2 border-purple-600 text-purple-600 font-bold";
+            }
+        }
+
+        // Initialize Application on Window Load
+        let app;
+        window.onload = function() {
+            app = new App();
+        };
+    </script>
+</body>
+</html>
