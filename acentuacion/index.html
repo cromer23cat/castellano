@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acentúa-T: El Desafío de las Tildes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Fredoka', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .pop-card {
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .pop-card:hover {
+            transform: translateY(-4px) scale(1.01);
+        }
+        .bounce-in {
+            animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+        .syllable-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.5rem;
+            height: 2.5rem;
+            padding: 0 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin: 0 0.15rem;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="w-11 h-11 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <span class="font-display font-bold text-2xl">á</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold font-display text-slate-900 leading-none">Acentúa-T</h1>
+                    <p class="text-xs text-indigo-600 font-semibold tracking-wide">CICLO SUPERIOR</p>
+                </div>
+            </div>
+
+            <!-- Navegación principal -->
+            <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1.5 rounded-2xl">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-4 py-2 rounded-xl text-sm font-bold transition-all text-indigo-600 bg-white shadow-sm">
+                    🏠 Inicio
+                </button>
+                <button onclick="switchTab('theory')" id="nav-theory" class="px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-600 hover:text-slate-900">
+                    📚 Reglas de Acentuación
+                </button>
+                <button onclick="switchTab('games')" id="nav-games" class="px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-600 hover:text-slate-900">
+                    🎮 Minijuegos
+                </button>
+                <button onclick="switchTab('dictionary')" id="nav-dictionary" class="px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-600 hover:text-slate-900">
+                    🔍 Diccionario de Reglas
+                </button>
+            </nav>
+
+            <!-- Marcador de usuario -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl text-amber-700 font-bold text-sm">
+                    <span>🔥</span>
+                    <span id="global-streak">0</span>
+                    <span class="text-xs hidden sm:inline text-amber-600">Racha</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-xl text-indigo-700 font-bold text-sm">
+                    <span>⭐</span>
+                    <span id="global-score">0</span>
+                    <span class="text-xs hidden sm:inline text-indigo-600">Pts</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación Móvil -->
+        <div class="flex md:hidden border-t border-slate-100 justify-around p-2 bg-slate-50 text-xs font-bold">
+            <button onclick="switchTab('dashboard')" class="p-2 text-indigo-600 flex flex-col items-center">
+                <span>🏠</span> Inicio
+            </button>
+            <button onclick="switchTab('theory')" class="p-2 text-slate-600 flex flex-col items-center">
+                <span>📚</span> Reglas
+            </button>
+            <button onclick="switchTab('games')" class="p-2 text-slate-600 flex flex-col items-center">
+                <span>🎮</span> Juegos
+            </button>
+            <button onclick="switchTab('dictionary')" class="p-2 text-slate-600 flex flex-col items-center">
+                <span>🔍</span> Buscar
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+
+        <!-- VISTA: DASHBOARD / INICIO -->
+        <section id="view-dashboard" class="space-y-6">
+            <!-- Banner de bienvenida -->
+            <div class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-700 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">Aprende y Domina la Ortografía</span>
+                    <h2 class="text-3xl md:text-4xl font-bold font-display leading-tight mb-3">¡Conviértete en un Maestro de la Acentuación!</h2>
+                    <p class="text-indigo-100 text-sm md:text-base mb-6">Aprende por qué llevan o NO llevan tilde las palabras agudas, llanas, esdrújulas, hiatos y acentos diacríticos mediante minijuegos entretenidos.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchTab('games')" class="bg-white text-indigo-700 hover:bg-indigo-50 font-extrabold px-6 py-3 rounded-2xl shadow-lg transition-all font-display text-base">
+                            🚀 Empezar a Jugar
+                        </button>
+                        <button onclick="switchTab('theory')" class="bg-indigo-800/60 hover:bg-indigo-800/80 backdrop-blur-md text-white font-bold px-6 py-3 rounded-2xl transition-all text-base border border-white/20">
+                            📖 Repasar Reglas
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accesos directos a minijuegos -->
+            <div>
+                <h3 class="text-xl font-bold font-display text-slate-800 mb-4 flex items-center gap-2">
+                    <span>🎮</span> Minijuegos de Acentuación
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- Juego 1 Card -->
+                    <div onclick="startGame(1)" class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm pop-card cursor-pointer flex flex-col justify-between group border-l-8 border-l-blue-500">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-2xl mb-4 group-hover:scale-110 transition-transform">
+                                🎯
+                            </div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-blue-600">Nivel 1</span>
+                            <h4 class="text-lg font-bold font-display text-slate-800 mt-1">Clasificador Acentual</h4>
+                            <p class="text-xs text-slate-500 mt-2">Separa en sílabas e identifica si una palabra es Aguda, Llana o Esdrújula.</p>
+                        </div>
+                        <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+                            <span class="text-xs font-bold text-slate-400">Palabras clasificables</span>
+                            <span class="text-sm font-bold text-blue-600 flex items-center gap-1">Jugar &rarr;</span>
+                        </div>
+                    </div>
+
+                    <!-- Juego 2 Card -->
+                    <div onclick="startGame(2)" class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm pop-card cursor-pointer flex flex-col justify-between group border-l-8 border-l-emerald-500">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-2xl mb-4 group-hover:scale-110 transition-transform">
+                                ✍️
+                            </div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-600">Nivel 2</span>
+                            <h4 class="text-lg font-bold font-display text-slate-800 mt-1">¿Lleva Tilde o No?</h4>
+                            <p class="text-xs text-slate-500 mt-2">Analiza la sílaba tónica y la terminación para decidir si necesita tilde y por qué.</p>
+                        </div>
+                        <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+                            <span class="text-xs font-bold text-slate-400">Analizador completo</span>
+                            <span class="text-sm font-bold text-emerald-600 flex items-center gap-1">Jugar &rarr;</span>
+                        </div>
+                    </div>
+
+                    <!-- Juego 3 Card -->
+                    <div onclick="startGame(3)" class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm pop-card cursor-pointer flex flex-col justify-between group border-l-8 border-l-purple-500">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-2xl mb-4 group-hover:scale-110 transition-transform">
+                                🧩
+                            </div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-purple-600">Nivel 3</span>
+                            <h4 class="text-lg font-bold font-display text-slate-800 mt-1">Tilde Diacrítica</h4>
+                            <p class="text-xs text-slate-500 mt-2">Aprende a diferenciar palabras idénticas según su función en la oración (él/el, tú/tu, más/mas).</p>
+                        </div>
+                        <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+                            <span class="text-xs font-bold text-slate-400">Contexto de oraciones</span>
+                            <span class="text-sm font-bold text-purple-600 flex items-center gap-1">Jugar &rarr;</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen rápido de reglas -->
+            <div class="bg-slate-900 text-white rounded-3xl p-6 shadow-md">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold font-display flex items-center gap-2">
+                        <span>💡</span> La Regla de Oro (SEGA)
+                    </h3>
+                    <button onclick="switchTab('theory')" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl font-bold transition-all text-indigo-200">
+                        Ver Guía Completa
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                        <div class="text-xs text-pink-400 font-extrabold">S - Sobresdrújula</div>
+                        <div class="text-sm font-bold mt-1">Antes de la antepenúltima</div>
+                        <div class="text-xs text-slate-400 mt-1">¡SIEMPRE llevan tilde!</div>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                        <div class="text-xs text-amber-400 font-extrabold">E - Esdrújula</div>
+                        <div class="text-sm font-bold mt-1">Antepenúltima sílaba</div>
+                        <div class="text-xs text-slate-400 mt-1">¡SIEMPRE llevan tilde!</div>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                        <div class="text-xs text-emerald-400 font-extrabold">G - Grave / Llana</div>
+                        <div class="text-sm font-bold mt-1">Penúltima sílaba</div>
+                        <div class="text-xs text-slate-400 mt-1">Si NO terminan en N, S o Vocal</div>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                        <div class="text-xs text-blue-400 font-extrabold">A - Aguda</div>
+                        <div class="text-sm font-bold mt-1">Última sílaba</div>
+                        <div class="text-xs text-slate-400 mt-1">Si TERMINAN en N, S o Vocal</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: REGLAS DE ACENTUACIÓN -->
+        <section id="view-theory" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm">
+                <div class="max-w-3xl">
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider">Manual de Ortografía</span>
+                    <h2 class="text-2xl md:text-3xl font-bold font-display text-slate-900 mt-2">Normas Generales de Acentuación</h2>
+                    <p class="text-slate-600 text-sm mt-1">Para saber si una palabra lleva tilde o no, debemos seguir dos pasos sencillos: encontrar la **sílaba tónica** (la que suena más fuerte) y mirar en qué letra **termina**.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <!-- Agudas -->
+                    <div class="bg-blue-50/60 border border-blue-200/60 rounded-3xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold font-display text-blue-900">1. Palabras Agudas</h3>
+                            <span class="bg-blue-200 text-blue-800 text-xs font-extrabold px-2.5 py-1 rounded-lg">Última Sílaba</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-4">La fuerza de voz recae en la última sílaba.</p>
+                        
+                        <div class="space-y-3">
+                            <div class="bg-white p-3 rounded-2xl border border-blue-100 shadow-sm">
+                                <div class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                                    <span>✅</span> SÍ LLEVAN TILDE cuando terminan en <strong>N, S o VOCAL</strong>.
+                                </div>
+                                <div class="text-xs text-slate-600 mt-1 italic">Ejemplos: ca-mión (N), com-pás (S), su-fá (vocal), ma-má (vocal).</div>
+                            </div>
+                            <div class="bg-white p-3 rounded-2xl border border-blue-100 shadow-sm">
+                                <div class="text-xs font-bold text-rose-600 flex items-center gap-1">
+                                    <span>❌</span> NO LLEVAN TILDE si terminan en cualquier otra consonante.
+                                </div>
+                                <div class="text-xs text-slate-600 mt-1 italic">Ejemplos: re-loj (termina en J), pa-pel (termina en L), pa-red (termina en D).</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Llanas -->
+                    <div class="bg-emerald-50/60 border border-emerald-200/60 rounded-3xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold font-display text-emerald-900">2. Palabras Llanas (Graves)</h3>
+                            <span class="bg-emerald-200 text-emerald-800 text-xs font-extrabold px-2.5 py-1 rounded-lg">Penúltima Sílaba</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-4">La fuerza de voz recae en la penúltima sílaba.</p>
+
+                        <div class="space-y-3">
+                            <div class="bg-white p-3 rounded-2xl border border-emerald-100 shadow-sm">
+                                <div class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                                    <span>✅</span> SÍ LLEVAN TILDE cuando NO terminan en N, S o Vocal.
+                                </div>
+                                <div class="text-xs text-slate-600 mt-1 italic">Ejemplos: á-rbol (L), mó-vil (L), lá-piz (Z), cár-cel (L).</div>
+                            </div>
+                            <div class="bg-white p-3 rounded-2xl border border-emerald-100 shadow-sm">
+                                <div class="text-xs font-bold text-rose-600 flex items-center gap-1">
+                                    <span>❌</span> NO LLEVAN TILDE si terminan en N, S o Vocal.
+                                </div>
+                                <div class="text-xs text-slate-600 mt-1 italic">Ejemplos: me-sa (vocal), li-bro (vocal), ca-sa-s (S), o-de-na-dor-es (S).</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Esdrújulas -->
+                    <div class="bg-amber-50/60 border border-amber-200/60 rounded-3xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold font-display text-amber-900">3. Palabras Esdrújulas</h3>
+                            <span class="bg-amber-200 text-amber-800 text-xs font-extrabold px-2.5 py-1 rounded-lg">Antepenúltima Sílaba</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-4">La fuerza de voz recae en la antepenúltima sílaba.</p>
+
+                        <div class="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm">
+                            <div class="text-xs font-bold text-amber-700 flex items-center gap-1">
+                                <span>⭐</span> ¡REGLA FÁCIL! SIEMPRE llevan tilde, sin excepción.
+                            </div>
+                            <div class="text-xs text-slate-600 mt-2 italic">Ejemplos: mú-si-ca, pá-ja-ro, té-le-fo-no, má-gi-co, brú-ju-la.</div>
+                        </div>
+                    </div>
+
+                    <!-- Caso Especial: Hiatos -->
+                    <div class="bg-purple-50/60 border border-purple-200/60 rounded-3xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold font-display text-purple-900">4. Caso Especial: Hiatos (í, ú)</h3>
+                            <span class="bg-purple-200 text-purple-800 text-xs font-extrabold px-2.5 py-1 rounded-lg">Ruptura de Diptongo</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-4">Cuando se juntan una vocal débil (i, u) con fuerza y una fuerte (a, e, o).</p>
+
+                        <div class="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm">
+                            <div class="text-xs font-bold text-purple-700 flex items-center gap-1">
+                                <span>💥</span> La vocal débil recibe la tilde para romper el diptongo.
+                            </div>
+                            <div class="text-xs text-slate-600 mt-2 italic">Ejemplos: ma-rí-a, grú-a, pa-ís, co-mí-a, río. (Ignora las reglas generales de N, S o vocal).</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tilde Diacrítica -->
+                <div class="mt-6 bg-slate-50 border border-slate-200 rounded-3xl p-6">
+                    <h3 class="text-lg font-bold font-display text-slate-900 mb-2">5. La Tilde Diacrítica (Para diferenciar palabras)</h3>
+                    <p class="text-xs text-slate-600 mb-4">Se usa para distinguir palabras que se escriben igual pero tienen diferente significado:</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="bg-white p-3 rounded-xl border border-slate-200">
+                            <p><strong>Él</strong> (Pronombre) vs <strong>El</strong> (Artículo)</p>
+                            <span class="text-slate-500 italic">"Él lee el libro."</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-slate-200">
+                            <p><strong>Tú</strong> (Pronombre) vs <strong>Tu</strong> (Posesivo)</p>
+                            <span class="text-slate-500 italic">"Tú tienes tu mochila."</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-slate-200">
+                            <p><strong>Mí</strong> (Pronombre) vs <strong>Mi</strong> (Posesivo)</p>
+                            <span class="text-slate-500 italic">"Es para mí, no para mi hermano."</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: MINIJUEGOS -->
+        <section id="view-games" class="hidden space-y-6">
+            <!-- Selector de juego si no hay uno activo -->
+            <div id="game-selection" class="space-y-6">
+                <div class="text-center max-w-xl mx-auto py-4">
+                    <h2 class="text-3xl font-bold font-display text-slate-900">Selecciona un Minijuego</h2>
+                    <p class="text-slate-500 text-sm mt-1">Practica las reglas de acentuación con estos retos preparados para Ciclo Superior.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div onclick="startGame(1)" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm pop-card cursor-pointer text-center group">
+                        <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl mx-auto mb-4 group-hover:scale-110 transition-transform">🎯</div>
+                        <h3 class="font-display font-bold text-xl text-slate-800">1. Clasificador Acentual</h3>
+                        <p class="text-xs text-slate-500 mt-2 mb-4">Ubica la sílaba tónica y clasifica entre Aguda, Llana o Esdrújula.</p>
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all">Jugar Ahora</button>
+                    </div>
+
+                    <div onclick="startGame(2)" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm pop-card cursor-pointer text-center group">
+                        <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto mb-4 group-hover:scale-110 transition-transform">✍️</div>
+                        <h3 class="font-display font-bold text-xl text-slate-800">2. ¿Lleva Tilde o No?</h3>
+                        <p class="text-xs text-slate-500 mt-2 mb-4">Aplica las reglas ortográficas y explica la razón exacta.</p>
+                        <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all">Jugar Ahora</button>
+                    </div>
+
+                    <div onclick="startGame(3)" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm pop-card cursor-pointer text-center group">
+                        <div class="w-16 h-16 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-3xl mx-auto mb-4 group-hover:scale-110 transition-transform">🧩</div>
+                        <h3 class="font-display font-bold text-xl text-slate-800">3. Tilde Diacrítica</h3>
+                        <p class="text-xs text-slate-500 mt-2 mb-4">Elige la palabra correcta con o sin tilde en diferentes oraciones.</p>
+                        <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all">Jugar Ahora</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÁREA DE JUEGO ACTIVO -->
+            <div id="game-play-area" class="hidden bg-white rounded-3xl border border-slate-200/80 shadow-md p-6 md:p-8 max-w-3xl mx-auto">
+                <!-- Barra superior del juego -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                    <button onclick="exitGame()" class="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 bg-slate-100 px-3 py-1.5 rounded-xl">
+                        &larr; Volver a juegos
+                    </button>
+                    <div id="game-title" class="font-display font-bold text-slate-800 text-lg">Minijuego</div>
+                    <div id="game-progress" class="text-xs font-extrabold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-xl">Pregunta 1/10</div>
+                </div>
+
+                <!-- Contenido dinámico del minijuego -->
+                <div id="game-dynamic-content" class="min-h-[300px] flex flex-col justify-between">
+                    <!-- Se llena mediante JavaScript -->
+                </div>
+
+                <!-- Feedback modal / explicación de la norma -->
+                <div id="feedback-panel" class="hidden mt-6 p-5 rounded-2xl border transition-all bounce-in">
+                    <div class="flex items-start gap-3">
+                        <div id="feedback-icon" class="text-2xl">💡</div>
+                        <div class="flex-1">
+                            <h4 id="feedback-title" class="font-display font-bold text-base mb-1">Explicación de la Norma</h4>
+                            <p id="feedback-body" class="text-xs md:text-sm leading-relaxed"></p>
+                        </div>
+                    </div>
+                    <button id="next-question-btn" onclick="nextQuestion()" class="mt-4 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-sm transition-all">
+                        Siguiente Pregunta &rarr;
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: DICCIONARIO DE REGLAS -->
+        <section id="view-dictionary" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold font-display text-slate-900">Buscador y Diccionario de Reglas</h2>
+                        <p class="text-xs text-slate-500 mt-1">Explora las palabras de la base de datos y aprende por qué llevan o no llevan tilde.</p>
+                    </div>
+
+                    <!-- Buscador -->
+                    <div class="relative w-full md:w-72">
+                        <input type="text" id="search-input" onkeyup="filterDictionary()" placeholder="Buscar palabra (ej: reloj, camión)..." class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
+                        <span class="absolute right-3 top-2.5 text-slate-400 text-sm">🔍</span>
+                    </div>
+                </div>
+
+                <!-- Filtros por tipo -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="setDictFilter('all')" id="dict-filter-all" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white">Todas</button>
+                    <button onclick="setDictFilter('aguda')" id="dict-filter-aguda" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Agudas</button>
+                    <button onclick="setDictFilter('llana')" id="dict-filter-llana" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Llanas</button>
+                    <button onclick="setDictFilter('esdrujula')" id="dict-filter-esdrujula" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Esdrújulas</button>
+                    <button onclick="setDictFilter('hiato')" id="dict-filter-hiato" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Hiatos</button>
+                </div>
+
+                <!-- Lista de palabras de la base de datos -->
+                <div id="dictionary-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+                    <!-- Se genera dinámicamente -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <p class="font-medium">Acentúa-T — Recurso Pedagógico de Ortografía para Ciclo Superior de Educación Primaria.</p>
+            <p class="mt-1 text-slate-400">Diseñado con enfoque inductivo y explicativo para dominar la acentuación castellana.</p>
+        </div>
+    </footer>
+
+    <script>
+        // BASE DE DATOS DE PALABRAS Y ORACIONES
+        const WORD_DATABASE = [
+            // AGUDAS CON TILDE
+            { word: "camión", clean: "camion", syllables: ["ca", "mión"], tonicIndex: 1, type: "aguda", hasTilde: true, ending: "n", explanation: "Es palabra AGUDA porque la sílaba tónica es la última ('mión'). LLEVA TILDE porque termina en la consonante 'N'." },
+            { word: "compás", clean: "compas", syllables: ["com", "pás"], tonicIndex: 1, type: "aguda", hasTilde: true, ending: "s", explanation: "Es palabra AGUDA porque su fuerza recae en la última sílaba ('pás'). LLEVA TILDE porque termina en 'S'." },
+            { word: "sofá", clean: "sofa", syllables: ["so", "fá"], tonicIndex: 1, type: "aguda", hasTilde: true, ending: "vocal", explanation: "Es palabra AGUDA con fuerza en la última sílaba ('fá'). LLEVA TILDE porque termina en VOCAL ('a')." },
+            { word: "capitán", clean: "capitan", syllables: ["ca", "pi", "tán"], tonicIndex: 2, type: "aguda", hasTilde: true, ending: "n", explanation: "Es AGUDA porque la última sílaba ('tán') es tónica. LLEVA TILDE por terminar en la letra 'N'." },
+            { word: "colibrí", clean: "colibri", syllables: ["co", "li", "brí"], tonicIndex: 2, type: "aguda", hasTilde: true, ending: "vocal", explanation: "Es palabra AGUDA. Su sílaba tónica es la última ('brí') y LLEVA TILDE porque termina en VOCAL ('i')." },
+            { word: "café", clean: "cafe", syllables: ["ca", "fé"], tonicIndex: 1, type: "aguda", hasTilde: true, ending: "vocal", explanation: "Es AGUDA con acento en la última sílaba ('fé'). LLEVA TILDE por terminar en VOCAL ('e')." },
+
+            // AGUDAS SIN TILDE
+            { word: "reloj", clean: "reloj", syllables: ["re", "loj"], tonicIndex: 1, type: "aguda", hasTilde: false, ending: "j", explanation: "Es palabra AGUDA porque la sílaba tónica es la última ('loj'). NO LLEVA TILDE porque termina en 'J' (solo llevan tilde si terminan en N, S o Vocal)." },
+            { word: "papel", clean: "papel", syllables: ["pa", "pel"], tonicIndex: 1, type: "aguda", hasTilde: false, ending: "l", explanation: "Es palabra AGUDA (sílaba tónica 'pel'). NO LLEVA TILDE porque termina en 'L' (consonante distinta de N o S)." },
+            { word: "pared", clean: "pared", syllables: ["pa", "red"], tonicIndex: 1, type: "aguda", hasTilde: false, ending: "d", explanation: "Es palabra AGUDA (sílaba fuerte 'red'). NO LLEVA TILDE porque termina en la consonante 'D'." },
+            { word: "amor", clean: "amor", syllables: ["a", "mor"], tonicIndex: 1, type: "aguda", hasTilde: false, ending: "r", explanation: "Es palabra AGUDA (sílaba fuerte 'mor'). NO LLEVA TILDE porque termina en 'R'." },
+            { word: "actriz", clean: "actriz", syllables: ["ac", "triz"], tonicIndex: 1, type: "aguda", hasTilde: false, ending: "z", explanation: "Es AGUDA con fuerza en 'triz'. NO LLEVA TILDE porque termina en la consonante 'Z'." },
+
+            // LLANAS CON TILDE
+            { word: "árbol", clean: "arbol", syllables: ["ár", "bol"], tonicIndex: 0, type: "llana", hasTilde: true, ending: "l", explanation: "Es palabra LLANA porque la sílaba tónica es la penúltima ('ár'). LLEVA TILDE porque termina en 'L' (consonante distinta de N o S)." },
+            { word: "móvil", clean: "movil", syllables: ["mó", "vil"], tonicIndex: 0, type: "llana", hasTilde: true, ending: "l", explanation: "Es palabra LLANA (sílaba fuerte 'mó'). LLEVA TILDE porque termina en la consonante 'L'." },
+            { word: "lápiz", clean: "lapiz", syllables: ["lá", "piz"], tonicIndex: 0, type: "llana", hasTilde: true, ending: "z", explanation: "Es LLANA porque su sílaba tónica es la penúltima ('lá'). LLEVA TILDE porque termina en 'Z'." },
+            { word: "cárcel", clean: "carcel", syllables: ["cár", "cel"], tonicIndex: 0, type: "llana", hasTilde: true, ending: "l", explanation: "Es palabra LLANA con acento en 'cár'. LLEVA TILDE porque termina en la consonante 'L'." },
+            { word: "azúcar", clean: "azucar", syllables: ["a", "zú", "car"], tonicIndex: 1, type: "llana", hasTilde: true, ending: "r", explanation: "Es LLANA (sílaba tónica 'zú'). LLEVA TILDE porque termina en la consonante 'R'." },
+
+            // LLANAS SIN TILDE
+            { word: "mesa", clean: "mesa", syllables: ["me", "sa"], tonicIndex: 0, type: "llana", hasTilde: false, ending: "vocal", explanation: "Es palabra LLANA porque la sílaba tónica es 'me'. NO LLEVA TILDE porque termina en VOCAL ('a')." },
+            { word: "libro", clean: "libro", syllables: ["li", "bro"], tonicIndex: 0, type: "llana", hasTilde: false, ending: "vocal", explanation: "Es palabra LLANA (sílaba fuerte 'li'). NO LLEVA TILDE porque termina en VOCAL ('o')." },
+            { word: "casas", clean: "casas", syllables: ["ca", "sas"], tonicIndex: 0, type: "llana", hasTilde: false, ending: "s", explanation: "Es palabra LLANA (sílaba tónica 'ca'). NO LLEVA TILDE porque termina en la consonante 'S'." },
+            { word: "joven", clean: "joven", syllables: ["jo", "ven"], tonicIndex: 0, type: "llana", hasTilde: false, ending: "n", explanation: "Es LLANA con fuerza en 'jo'. NO LLEVA TILDE porque termina en la consonante 'N'." },
+            { word: "ventana", clean: "ventana", syllables: ["ven", "ta", "na"], tonicIndex: 1, type: "llana", hasTilde: false, ending: "vocal", explanation: "Es LLANA con fuerza en 'ta'. NO LLEVA TILDE por terminar en VOCAL." },
+
+            // ESDRÚJULAS (SIEMPRE LLEVAN TILDE)
+            { word: "música", clean: "musica", syllables: ["mú", "si", "ca"], tonicIndex: 0, type: "esdrujula", hasTilde: true, ending: "vocal", explanation: "Es ESDRÚJULA porque la sílaba tónica es la antepenúltima ('mú'). ¡Las palabras esdrújulas SIEMPRE llevan tilde!" },
+            { word: "pájaro", clean: "pajaro", syllables: ["pá", "ja", "ro"], tonicIndex: 0, type: "esdrujula", hasTilde: true, ending: "vocal", explanation: "Es ESDRÚJULA con acento en la antepenúltima sílaba ('pá'). SIEMPRE llevan tilde sin excepción." },
+            { word: "teléfono", clean: "telefono", syllables: ["te", "lé", "fo", "no"], tonicIndex: 1, type: "esdrujula", hasTilde: true, ending: "vocal", explanation: "Es ESDRÚJULA porque la fuerza recae en la antepenúltima sílaba ('lé'). SIEMPRE lleva tilde." },
+            { word: "brújula", clean: "brujula", syllables: ["brú", "ju", "la"], tonicIndex: 0, type: "esdrujula", hasTilde: true, ending: "vocal", explanation: "Es ESDRÚJULA (sílaba tónica 'brú'). LLEVA TILDE porque todas las palabras esdrújulas se acentúan." },
+            { word: "mágico", clean: "magico", syllables: ["má", "gi", "co"], tonicIndex: 0, type: "esdrujula", hasTilde: true, ending: "vocal", explanation: "Es ESDRÚJULA con fuerza en 'má'. LLEVA TILDE por la regla general de las esdrújulas." },
+
+            // HIATOS (RUPTURA DE DIPTONGO)
+            { word: "María", clean: "Maria", syllables: ["ma", "rí", "a"], tonicIndex: 1, type: "hiato", hasTilde: true, ending: "vocal", explanation: "Forma un HIATO. Se pone tilde en la vocal débil 'í' para romper el diptongo con la vocal fuerte 'a'." },
+            { word: "grúa", clean: "grua", syllables: ["grú", "a"], tonicIndex: 0, type: "hiato", hasTilde: true, ending: "vocal", explanation: "Es un HIATO. La vocal débil 'ú' suena con fuerza junto a la 'a', por lo que exige tilde obligatoria." },
+            { word: "país", clean: "pais", syllables: ["pa", "ís"], tonicIndex: 1, type: "hiato", hasTilde: true, ending: "s", explanation: "Es un HIATO formado por la combinación de vocal fuerte (a) + débil tónica (í). Lleva tilde en la 'í'." }
+        ];
+
+        const DIACRITIC_DATABASE = [
+            {
+                sentence: "____ no ha llegado todavía a la reunión.",
+                options: ["Él", "El"],
+                correct: "Él",
+                explanation: "'Él' lleva tilde cuando funciona como PRONOMBRE PERSONAL (se refiere a una persona)."
+            },
+            {
+                sentence: "Dame ____ cuaderno de matemáticas, por favor.",
+                options: ["el", "él"],
+                correct: "el",
+                explanation: "'El' NO lleva tilde cuando es un ARTÍCULO determinado que acompaña al sustantivo 'cuaderno'."
+            },
+            {
+                sentence: "¿Sabes si ____ vendrás a la fiesta del sábado?",
+                options: ["tú", "tu"],
+                correct: "tú",
+                explanation: "'Tú' lleva tilde cuando es PRONOMBRE PERSONAL ('tú vendrás')."
+            },
+            {
+                sentence: "Me gusta mucho ____ nuevo peinado.",
+                options: ["tu", "tú"],
+                correct: "tu",
+                explanation: "'Tu' NO lleva tilde cuando es un POSESIVO ('tu peinado')."
+            },
+            {
+                sentence: "A ____ me encanta escuchar música pop.",
+                options: ["mí", "mi"],
+                correct: "mí",
+                explanation: "'Mí' lleva tilde cuando es PRONOMBRE PERSONAL precedido de preposición ('A mí')."
+            },
+            {
+                sentence: "Prefiero pedir un vaso de ____ bien caliente.",
+                options: ["té", "te"],
+                correct: "té",
+                explanation: "'Té' lleva tilde cuando se refiere a la BEBIDA o infusión."
+            },
+            {
+                sentence: "Quiero ir al cine, ____ no tengo suficiente dinero.",
+                options: ["mas", "más"],
+                correct: "mas",
+                explanation: "'Mas' sin tilde equivale a 'pero' (conjunción adversativa). 'Más' con tilde indica cantidad."
+            }
+        ];
+
+        // ESTADO GLOBAL DE LA APLICACIÓN
+        let gameState = {
+            score: 0,
+            streak: 0,
+            currentTab: 'dashboard',
+            currentGame: null,
+            currentGameQuestion: 0,
+            gameQuestions: [],
+            selectedDictFilter: 'all',
+            audioCtx: null
+        };
+
+        // INICIALIZACIÓN AL CARGAR LA PÁGINA
+        window.onload = function() {
+            renderDictionary();
+            updateScoreBoard();
+            initAudio();
+        };
+
+        // SISTEMA DE SONIDOS SINTETIZADOS (Sin librerías externas)
+        function initAudio() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                gameState.audioCtx = new AudioContext();
+            } catch(e) {
+                console.log("Audio API no soportado.");
+            }
+        }
+
+        function playSound(type) {
+            if (!gameState.audioCtx) return;
+            if (gameState.audioCtx.state === 'suspended') {
+                gameState.audioCtx.resume();
+            }
+            
+            const ctx = gameState.audioCtx;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            const now = ctx.currentTime;
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now); // A3
+                osc.frequency.exponentialRampToValueAtTime(146.83, now + 0.2); // D3
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        }
+
+        // NAVEGACIÓN ENTRE PESTAÑAS
+        function switchTab(tabId) {
+            gameState.currentTab = tabId;
+            
+            // Ocultar todas las vistas
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            
+            // Mostrar vista seleccionada
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            // Actualizar estado de botones de nav desktop
+            const navButtons = ['dashboard', 'theory', 'games', 'dictionary'];
+            navButtons.forEach(btn => {
+                const el = document.getElementById(`nav-${btn}`);
+                if (el) {
+                    if (btn === tabId) {
+                        el.className = "px-4 py-2 rounded-xl text-sm font-bold transition-all text-indigo-600 bg-white shadow-sm";
+                    } else {
+                        el.className = "px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-600 hover:text-slate-900";
+                    }
+                }
+            });
+
+            // Si cambiamos a minijuegos y no hay juego activo, mostrar selector
+            if (tabId === 'games' && !gameState.currentGame) {
+                document.getElementById('game-selection').classList.remove('hidden');
+                document.getElementById('game-play-area').classList.add('hidden');
+            }
+        }
+
+        function updateScoreBoard() {
+            document.getElementById('global-score').innerText = gameState.score;
+            document.getElementById('global-streak').innerText = gameState.streak;
+        }
+
+        // INICIO Y LOGICA DE MINIJUEGOS
+        function startGame(gameId) {
+            gameState.currentGame = gameId;
+            gameState.currentGameQuestion = 0;
+            switchTab('games');
+
+            document.getElementById('game-selection').classList.add('hidden');
+            document.getElementById('game-play-area').classList.remove('hidden');
+
+            // Preparar preguntas según el juego
+            if (gameId === 1 || gameId === 2) {
+                // Mezclar palabras de la base de datos
+                gameState.gameQuestions = [...WORD_DATABASE].sort(() => Math.random() - 0.5).slice(0, 10);
+            } else if (gameId === 3) {
+                // Preguntas de tilde diacrítica
+                gameState.gameQuestions = [...DIACRITIC_DATABASE].sort(() => Math.random() - 0.5).slice(0, 7);
+            }
+
+            renderQuestion();
+        }
+
+        function exitGame() {
+            gameState.currentGame = null;
+            document.getElementById('game-selection').classList.remove('hidden');
+            document.getElementById('game-play-area').classList.add('hidden');
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('game-dynamic-content');
+            const feedbackPanel = document.getElementById('feedback-panel');
+            feedbackPanel.classList.add('hidden');
+            container.innerHTML = '';
+
+            const total = gameState.gameQuestions.length;
+            const current = gameState.currentGameQuestion + 1;
+            document.getElementById('game-progress').innerText = `Pregunta ${current}/${total}`;
+
+            if (gameState.currentGameQuestion >= total) {
+                renderGameSummary();
+                return;
+            }
+
+            const item = gameState.gameQuestions[gameState.currentGameQuestion];
+
+            if (gameState.currentGame === 1) {
+                // MINIJUEGO 1: CLASIFICADOR ACENTUAL
+                document.getElementById('game-title').innerText = "🎯 1. Clasificador Acentual";
+                
+                let syllablesHtml = item.syllables.map((s, idx) => `
+                    <span class="syllable-badge bg-indigo-100 text-indigo-800 border border-indigo-200">${s}</span>
+                `).join('<span class="text-slate-300 font-bold">-</span>');
+
+                container.innerHTML = `
+                    <div class="text-center py-4 space-y-4">
+                        <span class="text-xs font-extrabold uppercase tracking-widest text-slate-400">¿Qué tipo de palabra es?</span>
+                        <div class="text-3xl font-bold font-display text-slate-900 tracking-wide">${item.word}</div>
+                        <div class="flex items-center justify-center gap-1 py-2">
+                            ${syllablesHtml}
+                        </div>
+                        <p class="text-xs text-slate-500">Observa dónde recae la fuerza de voz (sílaba tónica) y selecciona su clasificación:</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+                        <button onclick="checkAnswerGame1('aguda')" class="p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 font-display font-bold text-slate-700 transition-all text-base">
+                            🔵 Aguda
+                            <span class="block text-[10px] font-normal text-slate-400 mt-1">Acento en la última</span>
+                        </button>
+                        <button onclick="checkAnswerGame1('llana')" class="p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 font-display font-bold text-slate-700 transition-all text-base">
+                            🟢 Llana / Grave
+                            <span class="block text-[10px] font-normal text-slate-400 mt-1">Acento en la penúltima</span>
+                        </button>
+                        <button onclick="checkAnswerGame1('esdrujula')" class="p-4 rounded-2xl border-2 border-slate-200 hover:border-amber-500 hover:bg-amber-50 font-display font-bold text-slate-700 transition-all text-base">
+                            🟡 Esdrújula
+                            <span class="block text-[10px] font-normal text-slate-400 mt-1">Acento en antepenúltima</span>
+                        </button>
+                    </div>
+                `;
+            } 
+            else if (gameState.currentGame === 2) {
+                // MINIJUEGO 2: ¿LLEVA TILDE O NO?
+                document.getElementById('game-title').innerText = "✍️ 2. Analizador: ¿Lleva Tilde?";
+                
+                // Presentar palabra en versión limpia (sin tilde)
+                const displayWord = item.clean.toUpperCase();
+
+                container.innerHTML = `
+                    <div class="text-center py-4 space-y-4">
+                        <span class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Analiza la regla ortográfica</span>
+                        <div class="text-4xl font-bold font-display text-slate-900 tracking-wider bg-slate-50 py-4 rounded-2xl border border-slate-200 max-w-xs mx-auto">
+                            ${displayWord}
+                        </div>
+                        <p class="text-xs text-slate-500">¿Esta palabra debe llevar tilde según las normas ortográficas?</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <button onclick="checkAnswerGame2(true)" class="p-5 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 font-display font-bold text-slate-800 transition-all text-lg flex flex-col items-center gap-1">
+                            <span>✅ SÍ lleva tilde</span>
+                        </button>
+                        <button onclick="checkAnswerGame2(false)" class="p-5 rounded-2xl border-2 border-slate-200 hover:border-rose-500 hover:bg-rose-50 font-display font-bold text-slate-800 transition-all text-lg flex flex-col items-center gap-1">
+                            <span>❌ NO lleva tilde</span>
+                        </button>
+                    </div>
+                `;
+            }
+            else if (gameState.currentGame === 3) {
+                // MINIJUEGO 3: TILDE DIACRÍTICA
+                document.getElementById('game-title').innerText = "🧩 3. Tilde Diacrítica";
+
+                const parts = item.sentence.split("____");
+
+                container.innerHTML = `
+                    <div class="text-center py-6 space-y-4">
+                        <span class="text-xs font-extrabold uppercase tracking-widest text-purple-600 bg-purple-50 px-3 py-1 rounded-full">Completa la Oración</span>
+                        <div class="text-xl md:text-2xl font-bold text-slate-800 leading-relaxed bg-slate-50 p-6 rounded-3xl border border-slate-200">
+                            ${parts[0]} <span class="text-purple-600 underline font-extrabold px-2">¿?</span> ${parts[1]}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        ${item.options.map(opt => `
+                            <button onclick="checkAnswerGame3('${opt}')" class="p-4 rounded-2xl border-2 border-slate-200 hover:border-purple-500 hover:bg-purple-50 font-display font-bold text-slate-800 text-xl transition-all">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        // VERIFICACIÓN DE RESPUESTAS CON EXPLICACIÓN DETALLADA
+
+        function showFeedback(isCorrect, title, body) {
+            const panel = document.getElementById('feedback-panel');
+            const icon = document.getElementById('feedback-icon');
+            const titleEl = document.getElementById('feedback-title');
+            const bodyEl = document.getElementById('feedback-body');
+
+            panel.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'bg-rose-50', 'border-rose-200');
+
+            if (isCorrect) {
+                playSound('correct');
+                gameState.score += 10;
+                gameState.streak += 1;
+                panel.classList.add('bg-emerald-50', 'border-emerald-200');
+                icon.innerText = "🎉";
+                titleEl.className = "font-display font-bold text-base text-emerald-900 mb-1";
+                titleEl.innerText = "¡Correcto! " + title;
+            } else {
+                playSound('wrong');
+                gameState.streak = 0;
+                panel.classList.add('bg-rose-50', 'border-rose-200');
+                icon.innerText = "❌";
+                titleEl.className = "font-display font-bold text-base text-rose-900 mb-1";
+                titleEl.innerText = "¡Casi! " + title;
+            }
+
+            bodyEl.innerText = body;
+            updateScoreBoard();
+        }
+
+        function checkAnswerGame1(selectedType) {
+            const item = gameState.gameQuestions[gameState.currentGameQuestion];
+            // Normalizar 'hiato' a 'aguda' o 'llana' para este juego si aplica
+            let targetType = item.type;
+            if (targetType === 'hiato') {
+                targetType = item.syllables.length === 2 ? 'llana' : 'aguda';
+            }
+
+            const isCorrect = selectedType === targetType;
+            showFeedback(
+                isCorrect,
+                `La palabra "${item.word}" es ${item.type.toUpperCase()}.`,
+                item.explanation
+            );
+        }
+
+        function checkAnswerGame2(selectedHasTilde) {
+            const item = gameState.gameQuestions[gameState.currentGameQuestion];
+            const isCorrect = selectedHasTilde === item.hasTilde;
+
+            const tildeText = item.hasTilde ? "SÍ lleva tilde" : "NO lleva tilde";
+            showFeedback(
+                isCorrect,
+                `"${item.word}" ${tildeText}.`,
+                item.explanation
+            );
+        }
+
+        function checkAnswerGame3(selectedOpt) {
+            const item = gameState.gameQuestions[gameState.currentGameQuestion];
+            const isCorrect = selectedOpt === item.correct;
+
+            showFeedback(
+                isCorrect,
+                `La opción correcta es "${item.correct}".`,
+                item.explanation
+            );
+        }
+
+        function nextQuestion() {
+            gameState.currentGameQuestion++;
+            renderQuestion();
+        }
+
+        function renderGameSummary() {
+            const container = document.getElementById('game-dynamic-content');
+            container.innerHTML = `
+                <div class="text-center py-8 space-y-4">
+                    <div class="text-5xl mb-2">🏆</div>
+                    <h3 class="text-2xl font-bold font-display text-slate-900">¡Juego Completado!</h3>
+                    <p class="text-sm text-slate-600">Has demostrado un gran conocimiento de las reglas de acentuación.</p>
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 max-w-xs mx-auto text-indigo-900 font-bold">
+                        Puntuación total actual: ${gameState.score} pts
+                    </div>
+                    <div class="pt-4 flex justify-center gap-3">
+                        <button onclick="startGame(${gameState.currentGame})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-all">
+                            🔄 Jugar Otra Vez
+                        </button>
+                        <button onclick="exitGame()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-2.5 rounded-xl text-sm transition-all">
+                            🏠 Menú de Juegos
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // DICCIONARIO Y BUSCADOR DE REGLAS
+        function setDictFilter(filter) {
+            gameState.selectedDictFilter = filter;
+            const filters = ['all', 'aguda', 'llana', 'esdrujula', 'hiato'];
+            filters.forEach(f => {
+                const btn = document.getElementById(`dict-filter-${f}`);
+                if (f === filter) {
+                    btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200";
+                }
+            });
+            renderDictionary();
+        }
+
+        function filterDictionary() {
+            renderDictionary();
+        }
+
+        function renderDictionary() {
+            const listEl = document.getElementById('dictionary-list');
+            const searchVal = (document.getElementById('search-input')?.value || '').toLowerCase();
+
+            let filtered = WORD_DATABASE.filter(item => {
+                const matchesSearch = item.word.toLowerCase().includes(searchVal) || item.clean.toLowerCase().includes(searchVal);
+                const matchesFilter = gameState.selectedDictFilter === 'all' || item.type === gameState.selectedDictFilter;
+                return matchesSearch && matchesFilter;
+            });
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="col-span-2 text-center py-8 text-slate-400 text-sm">
+                        No se encontraron palabras con esos criterios de búsqueda.
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(item => `
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:border-indigo-200 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-lg font-bold font-display text-slate-900">${item.word}</span>
+                        <div class="flex gap-1.5">
+                            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md ${
+                                item.type === 'aguda' ? 'bg-blue-100 text-blue-700' :
+                                item.type === 'llana' ? 'bg-emerald-100 text-emerald-700' :
+                                item.type === 'esdrujula' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'
+                            }">${item.type}</span>
+                            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md ${item.hasTilde ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-200 text-slate-600'}">
+                                ${item.hasTilde ? 'Con Tilde' : 'Sin Tilde'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-500 mb-2">
+                        Sílabas: <strong class="text-slate-700">${item.syllables.join(' - ')}</strong>
+                    </div>
+                    <p class="text-xs text-slate-600 bg-white p-2.5 rounded-xl border border-slate-100 leading-relaxed">
+                        ${item.explanation}
+                    </p>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
